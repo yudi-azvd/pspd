@@ -6,25 +6,20 @@
 
 #include "calculate.h"
 
-int *
-add_100_svc(operands *argp, struct svc_req *rqstp)
-{
-	static int  result;
+int *add_100_svc(operands *argp, struct svc_req *rqstp) {
+    static int result;
 
     printf("Request add(%d, %d)\n", argp->x, argp->y);
-	result = argp->x + argp->y;
+    result = argp->x + argp->y;
 
-	return &result;
+    return &result;
 }
 
-int *
-sub_100_svc(operands *argp, struct svc_req *rqstp)
-{
-	static int  result;
+int *sub_100_svc(operands *argp, struct svc_req *rqstp) {
+    static int result;
 
     printf("Request sub(%d, %d)\n", argp->x, argp->y);
-	result = argp->x - argp->y;
+    result = argp->x - argp->y;
 
-	return &result;
+    return &result;
 }
-
