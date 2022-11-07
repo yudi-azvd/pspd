@@ -6,12 +6,12 @@
 
 #include "calculate.h"
 
-void calculate_100(char *host) {
+void calculate_100(char *host, int x, int y) {
     CLIENT *clnt;
     int *result_1;
-    operands add_100_arg;
     int *result_2;
-    operands sub_100_arg;
+    operands add_100_arg = {x, y};
+    operands sub_100_arg = {x, y};
 
 #ifndef DEBUG
     clnt = clnt_create(host, calculate, VER, "udp");
@@ -29,6 +29,10 @@ void calculate_100(char *host) {
     if (result_2 == (int *)NULL) {
         clnt_perror(clnt, "call failed");
     }
+
+    printf("%d + %d = %d\n", x, y, *result_1);
+    printf("%d - %d = %d\n", x, y, *result_2);
+
 #ifndef DEBUG
     clnt_destroy(clnt);
 #endif /* DEBUG */
@@ -36,12 +40,18 @@ void calculate_100(char *host) {
 
 int main(int argc, char *argv[]) {
     char *host;
+    CLIENT *client;
+    int x, y;
 
-    if (argc < 2) {
-        printf("usage: %s server_host\n", argv[0]);
+    if (argc != 4) {
+        fprintf(stderr, "usage: %s <server_host> N1 N2\n", argv[0]);
         exit(1);
     }
     host = argv[1];
-    calculate_100(host);
+
+    x = atoi(argv[2]);
+    y = atoi(argv[3]);
+
+    calculate_100(host, x, y);
     exit(0);
 }
