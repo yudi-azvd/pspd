@@ -4,6 +4,7 @@
         ".prettierrc": "json",
         "*.asm": "asm-intel-x86-generic",
         "calculate.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "signal.h": "c"
     }
 }
