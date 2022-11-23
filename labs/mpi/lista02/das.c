@@ -63,12 +63,7 @@ int main(int argc, char **argv) {
       MPI_Recv(arr_t, slice_size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
       int worker_id = status.MPI_SOURCE;
       int offset = slice_size * (worker_id - 1);
-      //   printf("MASTER SUM offset %d", offset);
       copy_arr(arr_t, 0, arr_c, offset, slice_size);
-      //   printf("MASTER received sum from worker(%d)\n", worker_id);
-      //   print_arr(arr_t, slice_size);
-      //   printf("--------------------\n");
-      //   fflush(stdout);
     }
 
     printf("Master final sum C\n");
@@ -77,18 +72,11 @@ int main(int argc, char **argv) {
     MPI_Recv(arr_a, ARR_SIZE / 2, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(arr_b, ARR_SIZE / 2, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-    // printf("worker(%d) print A\n", rank);
-    // print_arr(arr_a, ARR_SIZE / 2);
-    // printf("worker(%d) print B\n", rank);
-    // print_arr(arr_b, ARR_SIZE / 2);
     for (int i = 0; i < (ARR_SIZE / 2); i++)
       arr_c[i] = arr_a[i] + arr_b[i];
 
     int master_rank = 0;
     MPI_Send(arr_c, ARR_SIZE / 2, MPI_INT, master_rank, 0, MPI_COMM_WORLD);
-    // printf("worker(%d) print C sum\n", rank);
-    // print_arr(arr_c, ARR_SIZE / 2);
-    fflush(stdout);
   }
 
   MPI_Finalize();
