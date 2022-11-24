@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <mpi/mpi.h>
 
 // mpirun $(pwd)/dwc
 

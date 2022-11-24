@@ -25,17 +25,30 @@ int main(int argc, char **argv) {
   int rank, nprocs;
   MPI_Status status;
 
-  MPI_Init(&argc, &argv);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
-
   const int ARR_SIZE = 16;
   int arr_a[ARR_SIZE];
   int arr_b[ARR_SIZE];
   int arr_t[ARR_SIZE];
   int arr_c[ARR_SIZE];
 
+  MPI_Init(&argc, &argv);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+
   if (rank == 0) {
+    int nworkers = nprocs - 1;
+    int slice_size = ARR_SIZE / nworkers;
+    int rest_size = ARR_SIZE % nworkers;
+    int whole_workers = nworkers;
+    if (rest_size != 0) {
+      whole_workers--;
+    }
+
+    printf("n workers  %d\n", nworkers);
+    printf("slice size %d\n", slice_size);
+    printf("rest size  %d\n", rest_size);
+    fflush(stdout);
+    // exit(0);
     master_init_arr(arr_a, ARR_SIZE, 0, 1);
     master_init_arr(arr_b, ARR_SIZE, 2, 1);
     printf("Master array A\n");
@@ -44,33 +57,36 @@ int main(int argc, char **argv) {
     print_arr(arr_b, ARR_SIZE);
     fflush(stdout);
 
-    int nworkers = nprocs - 1;
-    int slice_size = ARR_SIZE / nworkers;
-    int rest_size = ARR_SIZE % nworkers;
-    printf("n workers  %d\n", nworkers);
-    printf("slice size %d\n", slice_size);
-    printf("rest size  %d\n", rest_size);
-    fflush(stdout);
-    exit(0);
-    int offset = 0;
-    for (int i = 1; i <= nworkers; i++) {
+    int offset = 0, i;
+    for (i = 1; i <= whole_workers; i++) {
       offset = slice_size * (i - 1);
       MPI_Send(&slice_size, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
       MPI_Send(arr_a + offset, slice_size, MPI_INT, i, 0, MPI_COMM_WORLD);
       MPI_Send(arr_b + offset, slice_size, MPI_INT, i, 0, MPI_COMM_WORLD);
+    }
+    if (rest_size != 0) {
+      offset = slice_size * (i - 1);
+      MPI_Send(&rest_size, 1, MPI_INT, i, 0, MPI_COMM_WORLD);
+      MPI_Send(arr_a + offset, rest_size, MPI_INT, i, 0, MPI_COMM_WORLD);
+      MPI_Send(arr_b + offset, rest_size, MPI_INT, i, 0, MPI_COMM_WORLD);
     }
 
     for (int i = 0; i < nworkers; i++) {
       MPI_Recv(arr_t, slice_size, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
       int worker_id = status.MPI_SOURCE;
       int offset = slice_size * (worker_id - 1);
-      copy_arr(arr_t, 0, arr_c, offset, slice_size);
+      // Se é o último worker e a divisão de trabalho é quebrada,
+      // copia só o restinho. CC, copia um pedaço inteiro do vetor.
+      if (rest_size != 0 && worker_id == nworkers) {
+        copy_arr(arr_t, 0, arr_c, offset, rest_size);
+      } else {
+        copy_arr(arr_t, 0, arr_c, offset, slice_size);
+      }
     }
 
     printf("Master final sum C\n");
     print_arr(arr_c, ARR_SIZE);
   } else {
-    exit(0);
     int MASTER_RANK = 0, slice_size = 0;
     MPI_Recv(&slice_size, 1, MPI_INT, MASTER_RANK, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     MPI_Recv(arr_a, slice_size, MPI_INT, MASTER_RANK, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
