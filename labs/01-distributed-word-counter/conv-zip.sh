@@ -20,7 +20,8 @@ pandoc --no-tex-ligatures \
   -H ./disable_float.tex \
   --template ./template.tex \
   $filename_with_ext \
-  -o $pdf_output
+  -o $pdf_output \
+  --highlight-style=kate
 
-rm aula1exer2_YudiYamane_160149410.zip
-zip -q aula1exer2_YudiYamane_160149410.zip * -x *.png -x *.md *.sh
+rm -rf pspd-lab01-rpc-grpc.zip
+zip -q pspd-lab01-rpc-grpc.zip * -x *.png -x *.tex -x *.md *.sh -x ./simple/\* -x ./lib/\* -x ./\*-rpc\* 
