@@ -24,4 +24,4 @@ pandoc --no-tex-ligatures \
   --highlight-style=kate
 
 rm -rf pspd-lab01-rpc-grpc-yudi-yamane.zip
-zip -q pspd-lab01-rpc-grpc-yudi-yamane.zip * -x *.png -x *.tex -x *.md *.sh -x ./simple/\* -x ./lib/\* -x ./\*-rpc\* 
+zip -q pspd-lab01-rpc-grpc-yudi-yamane.zip -r ./ -x *.png *.tex *.md *.sh *.out *.o ./b-rpc\* ./c-rpc\*

@@ -11,10 +11,34 @@ numbersections: true
 O nome do programa de maneira geral é Distributed Word Counter (DWC). 
 
 ## RPC 1 worker
-Não foi implementado
+Foi implementado uma versão muito simples em que o cliente envia uma lista de 
+palavras hard coded para um servidor. 
+
+O restante seria fazer o servidor retornar como resposta uma estrutura semelhante
+a um dicionário com a frequência de cada palvrava. Parecido com o que foi feito 
+em **gRPC 2 Workers**.
+
+Entre no diretório e compile o código:
+
+```sh
+cd a-rpc-1-worker
+make
+```
+
+Em uma janela inicie o servidor:
+
+```sh
+./dwc_server
+```
+
+Em uma janela inicie o cliente:
+
+```sh
+./dwc_client
+```
 
 ## RPC 2 workers
-Não foi implementado
+Não foi implementado.
 
 ## gRPC 2 workers
 

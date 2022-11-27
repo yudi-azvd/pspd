@@ -7,6 +7,10 @@
         "calculate.h": "c",
         "type_traits": "c",
         "signal.h": "c",
-        "dwc.h": "c"
+        "dwc.h": "c",
+        "atomic": "c",
+        "*.tcc": "c",
+        "fstream": "c",
+        "sstream": "c"
     }
 }

@@ -25,4 +25,12 @@ void DwcRequest_destroy(DwcRequest* req) {
     free(req);
 }
 
+Darray* read_from_file(char* file_path) {
+    FILE* fp = fopen(file_path, "r");
+    Darray* darr = Darray_create();
+
+    fclose(fp);
+    return darr;
+}
+
 #endif // UTIL_H_INCLUDED
