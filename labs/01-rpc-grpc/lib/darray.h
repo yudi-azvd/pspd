@@ -21,16 +21,11 @@ Darray* Darray_create() {
 }
 
 void Darray_destroy(Darray* darr) {
-    // for (size_t i = 0; i < darr->size; i++)
-    //     free(darr->arr[i]);
     free(darr->arr);
     free(darr);
 }
 
 void Darray_append(Darray* darr, char* str) {
-    // int str_len = strlen(str);
-    // darr->arr[darr->size] = calloc((str_len + 1), sizeof(char));
-    // memcpy(darr->arr[darr->size], str, str_len);
     darr->arr[darr->size] = str;
     darr->size++;
 }
