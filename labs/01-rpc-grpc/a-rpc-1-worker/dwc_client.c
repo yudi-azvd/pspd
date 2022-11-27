@@ -6,6 +6,7 @@
 
 #include "../lib/darray.h"
 #include "dwc.h"
+#include "util.h"
 
 void dwc_100(char *host, DwcRequest * dwc_req) {
   CLIENT *clnt;
@@ -50,23 +51,12 @@ int main(int argc, char *argv[]) {
     Darray_append(darr, strings[i]);
   }
 
-  DwcRequest *req = calloc(1, sizeof(DwcRequest));
-  req->strings.strings_len = darr->size;
-  req->strings.strings_val = calloc(darr->size, sizeof(String));
-  for (int i = 0; i < darr->size; i++) {
-    int len = strlen(darr->arr[i]);
-    req->strings.strings_val[i] = calloc(len+1, sizeof(char));
-    memcpy(req->strings.strings_val[i], darr->arr[i], len);
-  }
+  DwcRequest *req = DwcRequest_create_from_darray(darr);
 
   host = argv[1];
   dwc_100(host, req);
 
-  for (int i = 0; i < darr->size; i++)
-    free(req->strings.strings_val[i]);
-  free(req->strings.strings_val);
-  free(req);
-
+  DwcRequest_destroy(req);
   Darray_destroy(darr);
   exit(0);
 }
