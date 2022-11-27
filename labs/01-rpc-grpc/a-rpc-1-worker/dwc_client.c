@@ -12,7 +12,7 @@ void dwc_100(char *host, DwcRequest * dwc_req) {
   DwcResponse *result_1;
 
 #ifndef DEBUG
-  clnt = clnt_create(host, dwc, VER, "udp");
+  clnt = clnt_create(host, dwc, VER, "tcp");
   if (clnt == NULL) {
     clnt_pcreateerror(host);
     exit(1);
