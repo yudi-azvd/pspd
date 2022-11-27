@@ -20,7 +20,7 @@ static void
 dwc_100(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
-		Words count_100_arg;
+		DwcRequest count_100_arg;
 	} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
@@ -32,8 +32,8 @@ dwc_100(struct svc_req *rqstp, register SVCXPRT *transp)
 		return;
 
 	case count:
-		_xdr_argument = (xdrproc_t) xdr_Words;
-		_xdr_result = (xdrproc_t) xdr_int;
+		_xdr_argument = (xdrproc_t) xdr_DwcRequest;
+		_xdr_result = (xdrproc_t) xdr_DwcResponse;
 		local = (char *(*)(char *, struct svc_req *)) count_100_svc;
 		break;
 

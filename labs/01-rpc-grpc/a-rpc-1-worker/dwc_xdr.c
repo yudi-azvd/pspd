@@ -6,51 +6,34 @@
 #include "dwc.h"
 
 bool_t
-xdr_Words (XDR *xdrs, Words *objp)
+xdr_String (XDR *xdrs, String *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_pointer (xdrs, (char **)&objp->buffer, sizeof (char), (xdrproc_t) xdr_char))
+	 if (!xdr_string (xdrs, objp, ~0))
 		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_DwcRequest (XDR *xdrs, DwcRequest *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_array (xdrs, (char **)&objp->strings.strings_val, (u_int *) &objp->strings.strings_len, ~0,
+		sizeof (String), (xdrproc_t) xdr_String))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
+xdr_DwcResponse (XDR *xdrs, DwcResponse *objp)
+{
+	register int32_t *buf;
+
 	 if (!xdr_int (xdrs, &objp->length))
 		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_HashTable (XDR *xdrs, HashTable *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_int (xdrs, &objp->capacity))
-		 return FALSE;
-	 if (!xdr_int (xdrs, &objp->size))
-		 return FALSE;
-	 if (!xdr_pointer (xdrs, (char **)&objp->strings, sizeof (char), (xdrproc_t) xdr_char))
-		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_gnumbers (XDR *xdrs, gnumbers *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_int (xdrs, &objp->g_assets))
-		 return FALSE;
-	 if (!xdr_int (xdrs, &objp->g_liabilities))
-		 return FALSE;
-	return TRUE;
-}
-
-bool_t
-xdr_gnumbers_node (XDR *xdrs, gnumbers_node *objp)
-{
-	register int32_t *buf;
-
-	 if (!xdr_gnumbers (xdrs, &objp->gn_numbers))
-		 return FALSE;
-	 if (!xdr_pointer (xdrs, (char **)&objp->gn_next, sizeof (gnumbers_node), (xdrproc_t) xdr_gnumbers_node))
+	 if (!xdr_int (xdrs, &objp->total_words))
 		 return FALSE;
 	return TRUE;
 }

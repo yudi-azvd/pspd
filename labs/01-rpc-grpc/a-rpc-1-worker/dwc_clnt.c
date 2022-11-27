@@ -9,15 +9,15 @@
 /* Default timeout can be changed using clnt_control() */
 static struct timeval TIMEOUT = { 25, 0 };
 
-int *
-count_100(Words *argp, CLIENT *clnt)
+DwcResponse *
+count_100(DwcRequest *argp, CLIENT *clnt)
 {
-	static int clnt_res;
+	static DwcResponse clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
 	if (clnt_call (clnt, count,
-		(xdrproc_t) xdr_Words, (caddr_t) argp,
-		(xdrproc_t) xdr_int, (caddr_t) &clnt_res,
+		(xdrproc_t) xdr_DwcRequest, (caddr_t) argp,
+		(xdrproc_t) xdr_DwcResponse, (caddr_t) &clnt_res,
 		TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}

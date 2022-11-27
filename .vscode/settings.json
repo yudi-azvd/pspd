@@ -6,6 +6,7 @@
         "*.asm": "asm-intel-x86-generic",
         "calculate.h": "c",
         "type_traits": "c",
-        "signal.h": "c"
+        "signal.h": "c",
+        "dwc.h": "c"
     }
 }

@@ -1,26 +1,16 @@
-struct Words {
-  char* buffer;
+typedef string String<>;
+
+struct DwcRequest {
+  String strings<>;
+};
+
+struct DwcResponse {
   int length;
-};
-
-struct HashTable {
-  int capacity;
-  int size;
-  char *strings;
-};
-
-struct gnumbers {
-       int g_assets;
-       int g_liabilities;
-};
-
-struct gnumbers_node {
-       gnumbers gn_numbers;
-       gnumbers_node *gn_next;
+  int total_words;
 };
 
 program dwc {
   version VER {
-    int count(Words) = 1;
+    DwcResponse count(DwcRequest) = 1;
   } = 100;
 } = 55555555;
