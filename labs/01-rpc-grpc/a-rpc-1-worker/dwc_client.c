@@ -8,55 +8,55 @@
 #include "dwc.h"
 #include "util.h"
 
-void dwc_100(char *host, DwcRequest * dwc_req) {
-  CLIENT *clnt;
-  DwcResponse *result_1;
+void dwc_100(char* host, DwcRequest* dwc_req) {
+    CLIENT* clnt;
+    DwcResponse* result_1;
 
 #ifndef DEBUG
-  clnt = clnt_create(host, dwc, VER, "tcp");
-  if (clnt == NULL) {
-    clnt_pcreateerror(host);
-    exit(1);
-  }
+    clnt = clnt_create(host, dwc, VER, "tcp");
+    if (clnt == NULL) {
+        clnt_pcreateerror(host);
+        exit(1);
+    }
 #endif /* DEBUG */
 
-  result_1 = count_100(dwc_req, clnt);
-  if (result_1 == (DwcResponse *)NULL) {
-    clnt_perror(clnt, "call failed");
-  }
+    result_1 = count_100(dwc_req, clnt);
+    if (result_1 == (DwcResponse*)NULL) {
+        clnt_perror(clnt, "call failed");
+    }
 
-  printf("Total words: %d\n", result_1->total_words);
+    printf("Total words: %d\n", result_1->total_words);
 #ifndef DEBUG
-  clnt_destroy(clnt);
+    clnt_destroy(clnt);
 #endif /* DEBUG */
 }
 
-int main(int argc, char *argv[]) {
-  char *host;
+int main(int argc, char* argv[]) {
+    char* host;
 
-  if (argc < 2) {
-    printf("usage: %s server_host\n", argv[0]);
-    exit(1);
-  }
+    if (argc < 2) {
+        printf("usage: %s server_host\n", argv[0]);
+        exit(1);
+    }
 
-  Darray *darr = Darray_create();
-  char *strings[] = {
-      "lorem",
-      "ipsum",
-      "coisa",
-      "alem",
-  };
+    Darray* darr = Darray_create();
+    char* strings[] = {
+        "lorem",
+        "ipsum",
+        "coisa",
+        "alem",
+    };
 
-  for (int i = 0; i < 4; i++) {
-    Darray_append(darr, strings[i]);
-  }
+    for (int i = 0; i < 4; i++) {
+        Darray_append(darr, strings[i]);
+    }
 
-  DwcRequest *req = DwcRequest_create_from_darray(darr);
+    DwcRequest* req = DwcRequest_create_from_darray(darr);
 
-  host = argv[1];
-  dwc_100(host, req);
+    host = argv[1];
+    dwc_100(host, req);
 
-  DwcRequest_destroy(req);
-  Darray_destroy(darr);
-  exit(0);
+    DwcRequest_destroy(req);
+    Darray_destroy(darr);
+    return 0;
 }

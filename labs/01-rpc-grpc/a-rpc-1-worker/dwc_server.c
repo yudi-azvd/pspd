@@ -6,15 +6,15 @@
 
 #include "dwc.h"
 
-DwcResponse *count_100_svc(DwcRequest *argp, struct svc_req *rqstp) {
-  static DwcResponse result;
-  int strings_len = argp->strings.strings_len;
-  result.length = strings_len;
-  result.total_words = strings_len;
+DwcResponse* count_100_svc(DwcRequest* argp, struct svc_req* rqstp) {
+    static DwcResponse result;
+    int strings_len = argp->strings.strings_len;
+    result.length = strings_len;
+    result.total_words = strings_len;
 
-  printf("DWC Req strings len %d\n", strings_len);
-  for (int i = 0; i < strings_len; i++)
-    printf("DWC Req strings[%d]: %s\n", i, argp->strings.strings_val[i]);
+    printf("DWC Req strings len %d\n", strings_len);
+    for (int i = 0; i < strings_len; i++)
+        printf("DWC Req strings[%d]: %s\n", i, argp->strings.strings_val[i]);
 
-  return &result;
+    return &result;
 }
