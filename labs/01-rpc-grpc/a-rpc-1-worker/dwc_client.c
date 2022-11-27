@@ -10,7 +10,7 @@
 
 void dwc_100(char* host, DwcRequest* dwc_req) {
     CLIENT* clnt;
-    DwcResponse* result_1;
+    DwcResponse* response;
 
 #ifndef DEBUG
     clnt = clnt_create(host, dwc, VER, "tcp");
@@ -20,12 +20,12 @@ void dwc_100(char* host, DwcRequest* dwc_req) {
     }
 #endif /* DEBUG */
 
-    result_1 = count_100(dwc_req, clnt);
-    if (result_1 == (DwcResponse*)NULL) {
+    response = count_100(dwc_req, clnt);
+    if (response == (DwcResponse*)NULL) {
         clnt_perror(clnt, "call failed");
     }
 
-    printf("Total words: %d\n", result_1->total_words);
+    printf("Total words: %d\n", response->words_count.words_count_len);
 #ifndef DEBUG
     clnt_destroy(clnt);
 #endif /* DEBUG */
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     Darray* darr = Darray_create();
     char* strings[] = {
         "lorem",
-        "ipsum",
+        "epsum",
         "coisa",
         "alem",
     };

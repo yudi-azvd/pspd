@@ -4,9 +4,13 @@ struct DwcRequest {
   String strings<>;
 };
 
+struct WordCount {
+  string key<>;
+  int value;
+};
+
 struct DwcResponse {
-  int length;
-  int total_words;
+  WordCount words_count<>;    
 };
 
 program dwc {

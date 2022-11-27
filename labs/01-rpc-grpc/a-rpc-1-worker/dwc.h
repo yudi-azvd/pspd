@@ -24,9 +24,17 @@ struct DwcRequest {
 };
 typedef struct DwcRequest DwcRequest;
 
+struct WordCount {
+	char *key;
+	int value;
+};
+typedef struct WordCount WordCount;
+
 struct DwcResponse {
-	int length;
-	int total_words;
+	struct {
+		u_int words_count_len;
+		WordCount *words_count_val;
+	} words_count;
 };
 typedef struct DwcResponse DwcResponse;
 
@@ -51,11 +59,13 @@ extern int dwc_100_freeresult ();
 #if defined(__STDC__) || defined(__cplusplus)
 extern  bool_t xdr_String (XDR *, String*);
 extern  bool_t xdr_DwcRequest (XDR *, DwcRequest*);
+extern  bool_t xdr_WordCount (XDR *, WordCount*);
 extern  bool_t xdr_DwcResponse (XDR *, DwcResponse*);
 
 #else /* K&R C */
 extern bool_t xdr_String ();
 extern bool_t xdr_DwcRequest ();
+extern bool_t xdr_WordCount ();
 extern bool_t xdr_DwcResponse ();
 
 #endif /* K&R C */

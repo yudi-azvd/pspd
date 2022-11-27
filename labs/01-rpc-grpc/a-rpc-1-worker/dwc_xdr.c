@@ -27,13 +27,24 @@ xdr_DwcRequest (XDR *xdrs, DwcRequest *objp)
 }
 
 bool_t
+xdr_WordCount (XDR *xdrs, WordCount *objp)
+{
+	register int32_t *buf;
+
+	 if (!xdr_string (xdrs, &objp->key, ~0))
+		 return FALSE;
+	 if (!xdr_int (xdrs, &objp->value))
+		 return FALSE;
+	return TRUE;
+}
+
+bool_t
 xdr_DwcResponse (XDR *xdrs, DwcResponse *objp)
 {
 	register int32_t *buf;
 
-	 if (!xdr_int (xdrs, &objp->length))
-		 return FALSE;
-	 if (!xdr_int (xdrs, &objp->total_words))
+	 if (!xdr_array (xdrs, (char **)&objp->words_count.words_count_val, (u_int *) &objp->words_count.words_count_len, ~0,
+		sizeof (WordCount), (xdrproc_t) xdr_WordCount))
 		 return FALSE;
 	return TRUE;
 }
