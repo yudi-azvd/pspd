@@ -11,17 +11,12 @@ void build_response(DwcResponse* res, const HT* ht) {
     res->words_count.words_count_len = ht->size;
     res->words_count.words_count_val = (WordCount*)calloc(ht->size, sizeof(WordCount));
 
+    int word_index = 0;
     for (int i = 0; i < ht->capacity; i++) {
         if (!HT_item_equals_null(ht->items[i])) {
-            printf("addr  %p\n", &res->words_count.words_count_val[i].value);
-            printf("value %d\n", res->words_count.words_count_val[i].value);
-            // res->words_count.words_count_val[i].value = ht->items[i].value;
-            // res->words_count.words_count_val[i].key = ht->items[i].key;
-            // printf("HT[%d]: %s -> %d\n", i, ht->items[i].key, ht->items[i].value);
-            // memcpy(&res->words_count.words_count_val[i], &ht->items[i], sizeof(WordCount));
-
-            // printf("res word val %s\n", res->words_count.words_count_val[i].key);
-            // strcpy(res->words_count.words_count_val[i].key, );
+            res->words_count.words_count_val[word_index].value = ht->items[i].value;
+            res->words_count.words_count_val[word_index].key = ht->items[i].key;
+            word_index++;
         }
     }
 }
@@ -30,19 +25,16 @@ DwcResponse* count_100_svc(DwcRequest* req, struct svc_req* rqstp) {
     static DwcResponse response;
     int strings_len = req->strings.strings_len;
     HT* ht = HT_create();
-    for (int i = 0; i < response.words_count.words_count_len; i++) {
-        printf("words_count_val[%d]: %s\n", i, response.words_count.words_count_val[i].key);
-    }
 
-    printf("DWC Req strings length %d\n", strings_len);
     for (int i = 0; i < strings_len; i++) {
-        // printf("DWC Req strings[%d]: %s\n", i, req->strings.strings_val[i]);
         HT_put(ht, req->strings.strings_val[i], i);
     }
 
-    // ht_to_word_count(ht, response.words_count.words_count_val);
-    // response.words_count.words_count_len = strings_len;
     build_response(&response, ht);
+    // for (int i = 0; i < response.words_count.words_count_len; i++) {
+    //     printf("SERVER words_count_val[%d]: %s\n", i, response.words_count.words_count_val[i].key);
+    // }   
+
     HT_destroy(ht);
     return &response;
 }
