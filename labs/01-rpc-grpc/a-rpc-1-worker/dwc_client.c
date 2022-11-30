@@ -5,10 +5,11 @@
  */
 
 #include "../lib/darray.h"
+#include "../lib/hashtable.h"
 #include "dwc.h"
 #include "util.h"
 
-void dwc_100(char* host, DwcRequest* dwc_req) {
+DwcResponse* dwc_100(char* host, DwcRequest* req) {
     CLIENT* clnt;
     DwcResponse* response;
 
@@ -20,43 +21,36 @@ void dwc_100(char* host, DwcRequest* dwc_req) {
     }
 #endif /* DEBUG */
 
-    response = count_100(dwc_req, clnt);
+    response = count_100(req, clnt);
     if (response == (DwcResponse*)NULL) {
         clnt_perror(clnt, "call failed");
     }
 
-    printf("Total words: %d\n", response->words_count.words_count_len);
 #ifndef DEBUG
     clnt_destroy(clnt);
 #endif /* DEBUG */
+    return response;
 }
 
 int main(int argc, char* argv[]) {
-    char* host;
-
-    if (argc < 2) {
-        printf("usage: %s server_host\n", argv[0]);
+    if (argc < 3) {
+        printf("usage: %s <server_host> <file path>\n", argv[0]);
         exit(1);
     }
 
-    Darray* darr = Darray_create();
-    char* strings[] = {
-        "lorem",
-        "epsum",
-        "coisa",
-        "alem",
-    };
-
-    for (int i = 0; i < 4; i++) {
-        Darray_append(darr, strings[i]);
-    }
-
+    char* host = argv[1];
+    char* file_path = argv[2];
+    Darray* darr = read_from_file(file_path);
     DwcRequest* req = DwcRequest_create_from_darray(darr);
+    DwcResponse* res = dwc_100(host, req);
 
-    host = argv[1];
-    dwc_100(host, req);
+    int total_words = res->words_count.words_count_len;
+    for (int i = 0; i < total_words; i++)
+        printf("Word[%d]: %s, count %d\n", i, res->words_count.words_count_val[i].key, res->words_count.words_count_val[i].value);
+    printf("Total words: %d\n", total_words);
 
     DwcRequest_destroy(req);
     Darray_destroy(darr);
+    // DwcResponse_destroy(response);
     return 0;
 }

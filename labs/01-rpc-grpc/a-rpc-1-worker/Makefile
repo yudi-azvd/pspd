@@ -1,5 +1,6 @@
 all:
+	@touch dwc_client.c
 	@make -f Makefile.dwc
 
 clean:
-	@rm -f *.c *.h dwc_* Makefile.dwc
+	@rm *.o dwc_client dwc_server
