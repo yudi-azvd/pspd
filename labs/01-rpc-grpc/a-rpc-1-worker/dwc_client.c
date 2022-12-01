@@ -9,25 +9,25 @@
 #include "dwc.h"
 #include "util.h"
 
-DwcResponse* dwc_100(char* host, DwcRequest* req) {
-    CLIENT* clnt;
+DwcResponse* dwc_100(char* host, DwcRequest* request) {
+    CLIENT* client;
     DwcResponse* response;
 
 #ifndef DEBUG
-    clnt = clnt_create(host, dwc, VER, "tcp");
-    if (clnt == NULL) {
+    client = clnt_create(host, dwc, VER, "tcp");
+    if (client == NULL) {
         clnt_pcreateerror(host);
         exit(1);
     }
 #endif /* DEBUG */
 
-    response = count_100(req, clnt);
+    response = count_100(request, client);
     if (response == (DwcResponse*)NULL) {
-        clnt_perror(clnt, "call failed");
+        clnt_perror(client, "call failed");
     }
 
 #ifndef DEBUG
-    clnt_destroy(clnt);
+    clnt_destroy(client);
 #endif /* DEBUG */
     return response;
 }
