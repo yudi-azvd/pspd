@@ -17,10 +17,17 @@ DwcRequest* DwcRequest_create_from_darray(Darray* darr) {
 }
 
 void DwcResponse_destroy(DwcResponse* res) {
-    xdr_free((xdrproc_t) xdr_DwcRequest, (char*) res);
+    // FIXME: o ideial seria liberar a memória com algo assim:
+    // xdr_free((xdrproc_t) xdr_DwcRequest, (char*) res);
+    
+    for (int i = 0; i < res->words_count.words_count_len; i++)
+        free(res->words_count.words_count_val[i].key);
+    free(res->words_count.words_count_val);
 }
 
 void DwcRequest_destroy(DwcRequest* req) {
+    // FIXME: o ideial seria liberar a memória com algo assim:
+    // xdr_free((xdrproc_t) xdr_DwcResponse, (char*) req);
     free(req->strings.strings_val);
     free(req);
 }
@@ -28,7 +35,7 @@ void DwcRequest_destroy(DwcRequest* req) {
 Darray* read_from_file(char* file_path) {
     // FILE* fp = fopen(file_path, "r");
     Darray* darr = Darray_create();
-        char* strings[] = {
+    char* strings[] = {
         "lorem",
         "epsum",
         "coisa",

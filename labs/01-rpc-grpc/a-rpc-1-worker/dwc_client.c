@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     printf("Total words: %d\n", total_words);
 
     DwcRequest_destroy(req);
+    DwcResponse_destroy(res);
     Darray_destroy(darr);
-    // DwcResponse_destroy(response);
     return 0;
 }
