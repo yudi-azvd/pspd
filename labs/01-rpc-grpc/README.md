@@ -34,8 +34,9 @@ Em uma janela inicie o servidor:
 Em uma janela inicie o cliente:
 
 ```sh
-./dwc_client
+./dwc_client localhost ../samples/paragraph.txt
 ```
+![\label{fig:a-rpc-success}](a-rpc-1-worker/a-rpc-success.png)
 
 ## RPC 2 workers
 Não foi implementado.
