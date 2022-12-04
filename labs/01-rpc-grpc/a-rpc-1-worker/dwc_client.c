@@ -46,6 +46,6 @@ int main(int argc, char* argv[]) {
 
     DwcRequest_destroy(req);
     DwcResponse_destroy(res);
-    Darray_destroy(darr);
+    Darray_destroy_deep(darr);
     return 0;
 }

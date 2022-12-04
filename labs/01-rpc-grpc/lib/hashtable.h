@@ -1,10 +1,11 @@
 #ifndef HASHTABLE_H_INCLUDED
 #define HASHTABLE_H_INCLUDED
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define _HT_INITIAL_CAPACITY 11
+#define _HT_INITIAL_CAPACITY 23
 #define _HT_MAX_STR_LEN 100
 #define _HT_ITEM_NULL_VAL -1
 
@@ -48,36 +49,65 @@ HT* HT_create() {
     ht->capacity = _HT_INITIAL_CAPACITY;
     ht->size = 0;
     ht->items = (HT_item*)calloc(_HT_INITIAL_CAPACITY, sizeof(HT_item));
-    for (int i = 0; i < ht->capacity; i++)
+    for (int i = 0; i < ht->capacity; i++) {
         ht->items[i].value = _HT_ITEM_NULL_VAL;
-    
+        ht->items[i].key = NULL;
+    }
+
     return ht;
 }
 
 #define HT_size(ht) ht->size
 
 int HT_put(HT* ht, char* key, int value) {
-    int probe, capacity = ht->capacity;
+    int probe = 0, capacity = ht->capacity;
     unsigned hash = HT_hash(key, capacity);
-    char k[_HT_MAX_STR_LEN];
+    char k[_HT_MAX_STR_LEN] = "\0";
 
-    // for (size_t probe = 0; probe < capacity; probe++) {
-    //     k[0] = '\0';
-    //     strcpy(k, ht->items[hash].key);
-    // }
-    ht->size++;
-    // strcpy(ht->items[hash].key, key);
+    for (probe = 0; probe < capacity; probe++) {
+        if (ht->items[hash].value == _HT_ITEM_NULL_VAL || strcmp(ht->items[hash].key, key) == 0)
+            break;
+
+        hash = (hash + 1) % capacity;
+    }
+
+    if (probe >= capacity) {
+        printf("HT ERR: probe at %d. capacity %d\n", probe, capacity);
+    }
+
+    if (ht->items[hash].value == _HT_ITEM_NULL_VAL) {
+        ht->size++;
+    }
+
     ht->items[hash].key = key;
     ht->items[hash].value = value;
     return hash;
 }
 
-int HT_remove(HT* ht, char* key) {
-    return 0;
+int HT_get(HT* ht, char* key) {
+    int probe = 0, capacity = ht->capacity;
+    unsigned hash = HT_hash(key, capacity);
+    char k[_HT_MAX_STR_LEN] = "\0";
+
+    for (probe = 0; probe < capacity; probe++) {
+        if (probe >= capacity)
+            return _HT_ITEM_NULL_VAL;
+
+        if (ht->items[hash].key != NULL && strcmp(ht->items[hash].key, key) == 0)
+            return ht->items[hash].value;
+
+        hash = (hash + 1) % capacity;
+    }
+
+    return _HT_ITEM_NULL_VAL;
 }
 
-int HT_get(HT* ht, char* key) {
-    return 0;
+void HT_print(HT* ht) {
+    for (size_t i = 0; i < ht->capacity; i++) {
+        if (ht->items[i].value != _HT_ITEM_NULL_VAL) {
+            printf("{%s: %d}\n", ht->items[i].key, ht->items[i].value);
+        }
+    }
 }
 
 void HT_destroy(HT* ht) {

@@ -9,6 +9,9 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/a.out",
+            "args": [
+                "../samples/line.txt"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

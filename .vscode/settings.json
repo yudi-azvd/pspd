@@ -12,6 +12,7 @@
         "*.tcc": "c",
         "fstream": "c",
         "sstream": "c",
-        "hashtable.h": "c"
+        "hashtable.h": "c",
+        "util.h": "c"
     }
 }

@@ -7,6 +7,13 @@
 #include "../lib/hashtable.h"
 #include "dwc.h"
 
+void DwcResponse_print(DwcResponse* res) {
+    for (int i = 0; i < res->words_count.words_count_len; i++) {
+        printf("Server words[%d]: %s -> %d\n", 
+            i, res->words_count.words_count_val[i].key, res->words_count.words_count_val[i].value);
+    }   
+}
+
 void build_response(DwcResponse* res, const HT* ht) {
     res->words_count.words_count_len = ht->size;
     res->words_count.words_count_val = (WordCount*)calloc(ht->size, sizeof(WordCount));
@@ -27,14 +34,17 @@ DwcResponse* count_100_svc(DwcRequest* req, struct svc_req* rqstp) {
     HT* ht = HT_create();
 
     for (int i = 0; i < strings_len; i++) {
-        HT_put(ht, req->strings.strings_val[i], i);
+        int word_count = HT_get(ht, req->strings.strings_val[i]);
+        if (word_count == _HT_ITEM_NULL_VAL) {
+            HT_put(ht, req->strings.strings_val[i], 1);
+        } else {
+            HT_put(ht, req->strings.strings_val[i], word_count+1);
+        }
     }
 
+    printf("server received %d words\n", req->strings.strings_len);
     build_response(&response, ht);
-    // for (int i = 0; i < response.words_count.words_count_len; i++) {
-    //     printf("SERVER words_count_val[%d]: %s\n", i, response.words_count.words_count_val[i].key);
-    // }   
-
+    // DwcResponse_print(&response);
     HT_destroy(ht);
     return &response;
 }

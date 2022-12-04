@@ -61,7 +61,7 @@ python dwc_server.py
 Em outra janela de terminal execute o cliente
 
 ```sh
-python dwc_client.py ../samples/small.txt localhost:50051 localhost:50051
+python dwc_client.py ../samples/line.txt localhost:50051 localhost:50051
 ```
 
 Nesse caso, o trabalho será dividido entre threads no mesmo host. O resultado 
@@ -86,7 +86,7 @@ foi executado em uma máquina Windows. As Figuras \ref{fig:grpc-host-1} e
 Vale ressaltar que o cliente foi executado especificamente com os endereços do
 host 1 e host 2.
 
-O cliente leu do arquivo `small.txt` as plavras `a b c d e e a` e enviou a 
+O cliente leu do arquivo `line.txt` as plavras `a b c d e e a` e enviou a 
 primeira metade para o servidor em Linux e a segunda metade para o servidor em 
 Windows.
 

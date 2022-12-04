@@ -1,3 +1,6 @@
+htfile:
+	gcc -g hashtable_from_file.c
+
 darr:
 	gcc -g darray_main.c
 
