@@ -13,22 +13,18 @@ DwcResponse* dwc_100(char* host, DwcRequest* request) {
     CLIENT* client;
     DwcResponse* response;
 
-#ifndef DEBUG
     client = clnt_create(host, dwc, VER, "tcp");
     if (client == NULL) {
         clnt_pcreateerror(host);
         exit(1);
     }
-#endif /* DEBUG */
 
     response = count_100(request, client);
     if (response == (DwcResponse*)NULL) {
         clnt_perror(client, "call failed");
     }
 
-#ifndef DEBUG
     clnt_destroy(client);
-#endif /* DEBUG */
     return response;
 }
 
@@ -38,8 +34,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
-    char* host = argv[1];
-    char* file_path = argv[2];
+    char *host = argv[1], *file_path = argv[2];
     Darray* darr = read_from_file(file_path);
     DwcRequest* req = DwcRequest_create_from_darray(darr);
     DwcResponse* res = dwc_100(host, req);
