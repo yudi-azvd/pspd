@@ -25,10 +25,7 @@ Darray* Darray_create() {
     return darray;
 }
 
-Darray* Darray_create_from_str(char* str) {
-    Darray* darray = Darray_create();
-    // FIXME: Se o buffer_copy não é inicializado, 
-    // dá problema em last_word_found = strtok(NULL, delimeters)
+void Darray_append_from_str(Darray* darray, char* str) {
     char buffer_copy[MAX_LINE_BYTES] = "\0";
     strncpy(buffer_copy, str, strlen(str));
     char* delimeters = " \t\n";
@@ -41,8 +38,6 @@ Darray* Darray_create_from_str(char* str) {
         Darray_append(darray, word);
         last_word_found = strtok(NULL, delimeters);
     }
-
-    return darray;
 }
 
 void Darray_destroy(Darray* darr) {
