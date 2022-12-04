@@ -42,7 +42,8 @@ int main(int argc, char* argv[]) {
     int total_words = res->words_count.words_count_len;
     for (int i = 0; i < total_words; i++)
         printf("Word[%d]: %s, count %d\n", i, res->words_count.words_count_val[i].key, res->words_count.words_count_val[i].value);
-    printf("Total words: %d\n", total_words);
+    printf(" Total words: %d\n", darr->size);
+    printf("Unique words: %d\n", total_words);
 
     DwcRequest_destroy(req);
     DwcResponse_destroy(res);

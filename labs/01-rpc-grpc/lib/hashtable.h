@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define _HT_INITIAL_CAPACITY 23
+#define _HT_INITIAL_CAPACITY 1009
 #define _HT_MAX_STR_LEN 100
 #define _HT_ITEM_NULL_VAL -1
 
