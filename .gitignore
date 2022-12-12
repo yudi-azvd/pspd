@@ -192,3 +192,5 @@ cython_debug/
 *_client
 *_server
 dwc
+**/samples/**
+!samples/*.txt
