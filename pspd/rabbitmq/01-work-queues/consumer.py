@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
+import time
+import sys
 import pika
 from pika.channel import Channel
-import sys
 
-counter = 0
 
 def main():
     connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
@@ -13,8 +13,10 @@ def main():
     channel.queue_declare('hello')
 
     def callback(channel: Channel, method, properties, body):
-        print('[x] Received %r' % body)
-        counter += 1
+        print('[x] Received %r' % body.decode())
+        time.sleep(body.count(b'.'))
+        print('[x] Done')
+        channel.basic_ack(delivery_tag=method.delivery_tag)
 
     channel.basic_consume(
         queue='hello',
