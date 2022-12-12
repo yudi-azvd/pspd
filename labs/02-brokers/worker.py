@@ -13,8 +13,8 @@ def count_words(words: 'list[str]'):
     word_count['word_len_6'] = 0
     word_count['word_len_6_10'] = 0
     word_count['words'] = {}
-    print(type(words))
-    print(words)
+    # print(type(words))
+    # print(words)
     for word in words:
         word_len = len(word)
         if word_len < 6:
@@ -38,6 +38,7 @@ def on_request(channel: Channel, method: Basic.Deliver, props: BasicProperties, 
         properties=pika.BasicProperties(correlation_id=props.correlation_id),
         body=json.dumps(word_count))
     channel.basic_ack(delivery_tag=method.delivery_tag)
+    print('Waiting for messages...')
 
 def main():
     connection = BlockingConnection(ConnectionParameters('localhost'))
@@ -49,7 +50,7 @@ def main():
         on_message_callback=on_request
     )
 
-    print('Waiting for messages')
+    print('Waiting for messages...')
     channel.start_consuming()
 
 

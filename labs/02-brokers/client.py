@@ -33,6 +33,7 @@ class WordCountMerger:
 
     @classmethod
     def merge(cls, word_count: dict):
+        print(word_count.keys())
         cls.word_count['word_len_6'] += word_count['word_len_6']
         cls.word_count['word_len_6_10'] += word_count['word_len_6_10']
 
@@ -112,20 +113,12 @@ def main():
         word_count = client.call(words_slice)
         offset += words_job
         WordCountMerger.merge(word_count)
-        print(word_count)
+        # print(word_count)
     print('After merge:')
-    print(WordCountMerger.word_count)
+    print('#len(word) in [6, 10]', WordCountMerger.word_count['word_len_6_10'])
+    print('#len(word) < 6       ', WordCountMerger.word_count['word_len_6'])
+    print('Total words          ', len(WordCountMerger.word_count['words']))
 
-
-'''
-( 
-python producer.py First message.
-python producer.py Second message..
-python producer.py Third message...
-python producer.py Fourth message....
-python producer.py Fifth message.....
-)
-'''
 
 if __name__ == '__main__':
     main()
