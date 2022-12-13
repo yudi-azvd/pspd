@@ -43,7 +43,7 @@ class WordCountMerger:
             else:
                 cls.word_count['words'][word] += 1
 
-class WordCounterRpcClient:
+class WordCounterClient:
     MAX_WORKERS = 6
 
     def __init__(self) -> None:
@@ -106,7 +106,7 @@ def main():
     words = read_content_from_file(file_path)
     words_for_workers = divide_work(len(words), workers)
     print('>> words_for_worker', words_for_workers)
-    client = WordCounterRpcClient()
+    client = WordCounterClient()
     offset = 0
     for words_job in words_for_workers:
         words_slice = words[offset:offset+words_job]

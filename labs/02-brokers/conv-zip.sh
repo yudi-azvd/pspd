@@ -23,5 +23,5 @@ pandoc --no-tex-ligatures \
   -o $pdf_output \
   --highlight-style=kate
 
-rm -rf pspd-lab01-rpc-grpc-yudi-yamane.zip
-zip -q pspd-lab01-rpc-grpc-yudi-yamane.zip -r ./ -x *.png *.tex *.md *.sh *.out *.o
+rm -rf pspd-lab02-brokers-yudi-yamane.zip
+zip -q pspd-lab02-brokers-yudi-yamane.zip -r ./ -x *.png *.tex *.md *.sh *.out *.o "__pycache__/*" *.csv

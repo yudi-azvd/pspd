@@ -32,6 +32,7 @@ def count_words(words: 'list[str]'):
 def on_request(channel: Channel, method: Basic.Deliver, props: BasicProperties, body: bytes):
     words = json.loads(body.decode())
     word_count = count_words(words)
+    print(f'Received {len(words)} words')
     channel.basic_publish(
         exchange='', 
         routing_key=props.reply_to, 
