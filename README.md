@@ -5,6 +5,11 @@ Preguiça de digitar mais coisa.
 Precisa de GCC e Python e blá blá blá.
 
 
+## Referências
+
+- [Testing Distributed Systems](https://asatarin.github.io/testing-distributed-systems/)
+
+
 ## Depuração
 
 Links úteis:
