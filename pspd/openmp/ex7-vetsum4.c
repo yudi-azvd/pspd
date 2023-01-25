@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 #pragma omp parallel
     {
         int total_local = 0;
-#pragma omp parallel for
+#pragma omp for
         for (size_t i = 0; i < SIZE; i++) {
             c[i] = b[i] + a[i];
             total_local += c[i];
