@@ -13,6 +13,7 @@
         "fstream": "c",
         "sstream": "c",
         "hashtable.h": "c",
-        "util.h": "c"
+        "util.h": "c",
+        "selection-sort.h": "c"
     }
 }

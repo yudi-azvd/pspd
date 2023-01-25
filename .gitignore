@@ -194,3 +194,4 @@ cython_debug/
 dwc
 **/samples/**
 !samples/*.txt
+*.exec
