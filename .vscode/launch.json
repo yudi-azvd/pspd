@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "${fileDirname}/a.out",
             "args": [
-                "../samples/line.txt"
+                // "../samples/line.txt",
+                "aleatorio20.in",
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
