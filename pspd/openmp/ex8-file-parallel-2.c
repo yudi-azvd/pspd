@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// dd if=aleatorio.in skip=1955142 count=9 ibs=1
+// cat out.o | grep -E "read number:\s+3\s" | sort | uniq | sed -r -E -e "s/^.*\s+([0-9]+)-byte.*$/\1/g" > addrs.out
+// cat addrs.out | while read line; do dd if=aleatorio.in skip=$line count=9 ibs=1 status=none; done
+
 int get_file_size(char* filename) {
     FILE* fp = fopen(filename, "r");
     if (!fp) {
@@ -16,13 +20,13 @@ int get_file_size(char* filename) {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2) {
-        printf("Usage: %s <filename>", argv[0]);
+    if (argc < 3) {
+        printf("Usage: %s <num threads> <filename>", argv[0]);
         exit(1);
     }
 
-    omp_set_num_threads(2);
-    char* filename = argv[1];
+    char* filename = argv[2];
+    omp_set_num_threads(atoi(argv[1]));
     int file_size_bytes = get_file_size(filename);
     int displc = file_size_bytes / omp_get_max_threads();
     int ocurrences = 0;
@@ -36,24 +40,17 @@ int main(int argc, char** argv) {
     {
         FILE* fp = fopen(filename, "r");
         int tid = omp_get_thread_num();
-        // printf("Thread %d\n", tid);
         int offset = displc * tid;
         int read_number = 0;
         int local_ocurrences = 0;
         fseek(fp, offset, SEEK_SET);
-        printf("(%d) offset = %4d | displac: %d | end: %d\n", tid, offset, displc, offset + displc);
+        // printf("(%d) offset = %8d | end: %d | displc: %d\n", tid, offset, offset + displc, displc);
 
-        for (int i = 0; i < offset + displc; i += BYTES_PER_LINE) {
-            /**
-             * FIXME: a TID 1 continua lendo mesmo dps de i > 180 (offs + displc)
-             * 1 162-byte read number:    20416 | bytes read: 1
-             * 1 171-byte read number:     9404 | bytes read: 1
-             * 1 180-byte read number:     9404 | bytes read: -1
-             * 1 189-byte read number:     9404 | bytes read: -1
-             */
+        for (int i = 0; i < displc; i += BYTES_PER_LINE) {
             fseek(fp, offset + i, SEEK_SET);
             int bytes_read = fscanf(fp, "%d", &read_number);
-            printf("%d %3d-byte read number: %8d | bytes read: %d\n", tid, offset + i, read_number, bytes_read);
+            // printf("%d i=%8d %8d-byte read number: %8d | bytes read: %d\n", tid, i, offset + i, read_number, bytes_read);
+            printf("%d %8d-byte read number: %8d | bytes read: %d\n", tid, offset + i, read_number, bytes_read);
             if (read_number == n) {
                 local_ocurrences++;
             }
