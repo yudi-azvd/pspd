@@ -1,0 +1,10 @@
+CC          = icl
+CLINKER     = $(CC)
+OPTFLAGS    = /Qopenmp
+LIBS        =
+
+CFLAGS	  = $(OPTFLAGS) 
+
+OBJ=obj
+EXE=.exe
+RM=del

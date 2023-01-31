@@ -1,0 +1,12 @@
+# for gcc compiler on linux
+# copy to make.def
+CC          = cc
+CLINKER     = $(CC)
+OPTFLAGS    = -fopenmp
+LIBS        =
+
+CFLAGS	  = $(OPTFLAGS)
+
+OBJ=o
+EXE=
+RM=rm
