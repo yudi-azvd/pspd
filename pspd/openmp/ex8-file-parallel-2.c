@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// grep -E "0{7}+3" aleatorio.in | wc -l
 // dd if=aleatorio.in skip=1955142 count=9 ibs=1
 // cat out.o | grep -E "read number:\s+3\s" | sort | uniq | sed -r -E -e "s/^.*\s+([0-9]+)-byte.*$/\1/g" > addrs.out
 // cat addrs.out | while read line; do dd if=aleatorio.in skip=$line count=9 ibs=1 status=none; done
@@ -44,13 +45,17 @@ int main(int argc, char** argv) {
         int read_number = 0;
         int local_ocurrences = 0;
         fseek(fp, offset, SEEK_SET);
-        // printf("(%d) offset = %8d | end: %d | displc: %d\n", tid, offset, offset + displc, displc);
+        printf("(%d) offset = %8d | end: %d | displc: %d\n", tid, offset, offset + displc, displc);
 
+        /**
+         * FIXME: se filename=="aleatorio.in", a divisão
+         * displc = file_size_bytes / omp_get_max_threads() NÃO É INTEIRA!!!
+         */
         for (int i = 0; i < displc; i += BYTES_PER_LINE) {
             fseek(fp, offset + i, SEEK_SET);
             int bytes_read = fscanf(fp, "%d", &read_number);
             // printf("%d i=%8d %8d-byte read number: %8d | bytes read: %d\n", tid, i, offset + i, read_number, bytes_read);
-            printf("%d %8d-byte read number: %8d | bytes read: %d\n", tid, offset + i, read_number, bytes_read);
+            // printf("%d %8d-byte read number: %8d | bytes read: %d\n", tid, offset + i, read_number, bytes_read);
             if (read_number == n) {
                 local_ocurrences++;
             }
