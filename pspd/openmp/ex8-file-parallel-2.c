@@ -36,10 +36,10 @@ int divide_jobs_and_offsets(int jobs, int num_threads) {
         job_division[i++ % num_threads]++;
     }
 
-    int acc = 0;
+    int offset = 0;
     for (int i = 1; i < num_threads; i++) {
-        job_offsets[i] = acc;
-        acc += job_division[i] * BYTES_PER_LINE;
+        offset += job_division[i - 1] * BYTES_PER_LINE;
+        job_offsets[i] = offset;
     }
 
     return 0;
@@ -75,10 +75,10 @@ int main(int argc, char** argv) {
 
     divide_jobs_and_offsets(jobs, num_threads);
 
-    print_job_division(num_threads);
-    print_job_offsets(num_threads);
-    printf("        Jobs: %d\n", jobs);
-    printf("   File size: %d bytes\n", file_size_bytes);
+    // print_job_division(num_threads);
+    // print_job_offsets(num_threads);
+    // printf("        Jobs: %d\n", jobs);
+    // printf("   File size: %d bytes\n", file_size_bytes);
 
 #pragma omp parallel
     {
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
         int read_number = 0;
         int local_ocurrences = 0;
         fseek(fp, offset, SEEK_SET);
-        printf("(%d) offset = %8d | end: %d | jobs: %d\n", tid, offset, offset + displc, displc);
+        // printf("(%d) offset = %8d | end: %d | jobs: %d\n", tid, offset, offset + displc, displc);
 
         for (int i = 0; i < displc; i += BYTES_PER_LINE) {
             fseek(fp, offset + i, SEEK_SET);
