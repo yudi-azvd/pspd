@@ -7,6 +7,14 @@
 // cat out.o | grep -E "read number:\s+3\s" | sort | uniq | sed -r -E -e "s/^.*\s+([0-9]+)-byte.*$/\1/g" > addrs.out
 // cat addrs.out | while read line; do dd if=aleatorio.in skip=$line count=9 ibs=1 status=none; done
 
+#define BYTES_PER_LINE 9
+
+#define MAX_THREADS 8
+
+// Assumindo que não haverá mais de 8 threads
+int job_division[MAX_THREADS] = {[0 ... MAX_THREADS - 1] = 0};
+int job_offsets[MAX_THREADS] = {[0 ... MAX_THREADS - 1] = 0};
+
 int get_file_size(char* filename) {
     FILE* fp = fopen(filename, "r");
     if (!fp) {
@@ -20,37 +28,71 @@ int get_file_size(char* filename) {
     return size;
 }
 
+// TID   0  1  2  3
+// jobs [2, 2, 2, 1]
+int divide_jobs_and_offsets(int jobs, int num_threads) {
+    int remaing_jobs = jobs, i = 0;
+    while (remaing_jobs-- > 0) {
+        job_division[i++ % num_threads]++;
+    }
+
+    int acc = 0;
+    for (int i = 1; i < num_threads; i++) {
+        job_offsets[i] = acc;
+        acc += job_division[i] * BYTES_PER_LINE;
+    }
+
+    return 0;
+}
+
+void print_job_division(int num_threads) {
+    for (int i = 0; i < num_threads; i++) {
+        printf("        Jobs TID %d: %d jobs\n", i, job_division[i]);
+    }
+}
+
+void print_job_offsets(int num_threads) {
+    for (int i = 0; i < num_threads; i++) {
+        printf(" Offsets TID %d: offset %d\n", i, job_offsets[i]);
+    }
+}
+
 int main(int argc, char** argv) {
+    int ocurrences = 0;
     if (argc < 3) {
         printf("Usage: %s <num threads> <filename>", argv[0]);
         exit(1);
     }
 
-    char* filename = argv[2];
     omp_set_num_threads(atoi(argv[1]));
-    int file_size_bytes = get_file_size(filename);
-    int displc = file_size_bytes / omp_get_max_threads();
-    int ocurrences = 0;
-    int n = 3;
-    int BYTES_PER_LINE = 9;
+    char* filename = argv[2];
 
-    printf("File size: %d bytes\n", file_size_bytes);
-    printf("Displacement: %d\n\n", displc);
+    const int num_threads = omp_get_max_threads();
+    int file_size_bytes = get_file_size(filename);
+    int jobs = file_size_bytes / BYTES_PER_LINE;
+    int jobs_per_thread = jobs / num_threads;
+    int n = 3;
+
+    divide_jobs_and_offsets(jobs, num_threads);
+
+    print_job_division(num_threads);
+    print_job_offsets(num_threads);
+    printf("        Jobs: %d\n", jobs);
+    printf("   File size: %d bytes\n", file_size_bytes);
 
 #pragma omp parallel
     {
         FILE* fp = fopen(filename, "r");
         int tid = omp_get_thread_num();
-        int offset = displc * tid;
+        int displc = job_division[tid] * BYTES_PER_LINE;
+        // int offset = displc * tid;
+        // FIXME: descobrir como calcular esse offset
+        int offset = job_offsets[tid];
         int read_number = 0;
         int local_ocurrences = 0;
         fseek(fp, offset, SEEK_SET);
-        printf("(%d) offset = %8d | end: %d | displc: %d\n", tid, offset, offset + displc, displc);
+        printf("(%d) offset = %8d | end: %d | jobs: %d\n", tid, offset, offset + displc, displc);
 
-        /**
-         * FIXME: se filename=="aleatorio.in", a divisão
-         * displc = file_size_bytes / omp_get_max_threads() NÃO É INTEIRA!!!
-         */
         for (int i = 0; i < displc; i += BYTES_PER_LINE) {
             fseek(fp, offset + i, SEEK_SET);
             int bytes_read = fscanf(fp, "%d", &read_number);
