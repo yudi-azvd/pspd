@@ -70,7 +70,6 @@ int main(int argc, char** argv) {
     const int num_threads = omp_get_max_threads();
     int file_size_bytes = get_file_size(filename);
     int jobs = file_size_bytes / BYTES_PER_LINE;
-    int jobs_per_thread = jobs / num_threads;
     int n = 3;
 
     divide_jobs_and_offsets(jobs, num_threads);
