@@ -90,21 +90,19 @@ int main(int argc, char** argv) {
         fseek(fp, offset, SEEK_SET);
         // printf("(%d) offset = %8d | end: %d | jobs: %d\n", tid, offset, offset + displc, displc);
 
+// FIXME: não funciona
+#pragma omp for reduction(+ : ocurrences)
         for (int i = 0; i < displc; i += BYTES_PER_LINE) {
             fseek(fp, offset + i, SEEK_SET);
             int bytes_read = fscanf(fp, "%d", &read_number);
             // printf("%d i=%8d %8d-byte read number: %8d | bytes read: %d\n", tid, i, offset + i, read_number, bytes_read);
             // printf("%d %8d-byte read number: %8d | bytes read: %d\n", tid, offset + i, read_number, bytes_read);
             if (read_number == n) {
-                local_ocurrences++;
+                ocurrences++;
             }
         }
 
-#pragma omp atomic
-        ocurrences += local_ocurrences;
-
         // printf("[%d] read number: %8d | offset = %d\n", tid, read_number, offset);
-
         fclose(fp);
     }
 

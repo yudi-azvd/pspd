@@ -15,6 +15,7 @@
         "sstream": "c",
         "hashtable.h": "c",
         "util.h": "c",
-        "selection-sort.h": "c"
+        "selection-sort.h": "c",
+        "cstdlib": "cpp"
     }
 }
