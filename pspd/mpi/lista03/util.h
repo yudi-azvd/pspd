@@ -6,7 +6,7 @@
 
 #define BYTES_PER_LINE 9
 
-#define MAX_PROCS 8
+#define MAX_PROCS 20
 
 // Assumindo que não haverá mais de 8 threads
 int job_division[MAX_PROCS] = {[0 ... MAX_PROCS - 1] = 0};

@@ -40,16 +40,23 @@ int main(int argc, char** argv) {
         int jobs = file_size_bytes / BYTES_PER_LINE;
         divide_jobs_and_offsets(jobs, workers);
 
-        print_job_division(workers);
-        print_job_offsets(workers);
+        // print_job_division(workers);
+        // print_job_offsets(workers);
 
         for (int child_proc = 1; child_proc < nprocs; child_proc++) {
-            int displc = job_division[child_proc] * BYTES_PER_LINE;
-            int offset = job_offsets[child_proc];
+            int displc = job_division[child_proc - 1] * BYTES_PER_LINE;
+            int offset = job_offsets[child_proc - 1];
             MPI_Send(&displc, 1, MPI_INT, child_proc, 0, MPI_COMM_WORLD);
             MPI_Send(&offset, 1, MPI_INT, child_proc, 0, MPI_COMM_WORLD);
         }
 
+        for (int child_proc = 1; child_proc < nprocs; child_proc++) {
+            int local_ocurrences = 0;
+            MPI_Recv(&local_ocurrences, 1, MPI_INT, child_proc, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            ocurrences += local_ocurrences;
+        }
+
+        printf("Found %d ocurrences\n", ocurrences);
     } else {
         int local_ocurrences = 0;
         int displc = 0, offset = 0;
@@ -60,14 +67,21 @@ int main(int argc, char** argv) {
         MPI_Recv(&displc, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         MPI_Recv(&offset, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
-        printf("Child pid=%d | displc %d, offset %d\n", rank, displc, offset);
+        // printf("Child pid= %d | displc %d, offset %d\n", rank, displc, offset);
 
         for (int i = 0; i < displc; i += BYTES_PER_LINE) {
             moffset = offset + i;
             MPI_File_read_at(file, moffset, buffer, BYTES_PER_LINE, MPI_CHAR, MPI_STATUS_IGNORE);
-            buffer[BYTES_PER_LINE - 1] = '\0';
-            printf("Child %d at %lld read [%s]\n", rank, moffset, buffer);
+            read_number = atoi(buffer);
+
+            // buffer[BYTES_PER_LINE - 1] = '\0';
+            // printf("Child %d at %lld read [%s]\n", rank, moffset, buffer);
+            if (read_number == 3) {
+                local_ocurrences++;
+            }
         }
+
+        MPI_Send(&local_ocurrences, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
     }
 
     MPI_File_close(&file);
