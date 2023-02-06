@@ -196,3 +196,4 @@ dwc
 !samples/*.txt
 *.exec
 aleatorio.in
+*.bmp
