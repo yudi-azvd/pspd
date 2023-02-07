@@ -16,6 +16,9 @@
         "hashtable.h": "c",
         "util.h": "c",
         "selection-sort.h": "c",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "mpi.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c"
     }
 }

@@ -3,12 +3,19 @@
     {
       "name": "Linux",
       "includePath": [
-        "${workspaceFolder}/**"
+        "${workspaceFolder}/**",
+        "/usr/include/mpi/**"
       ],
       "defines": [],
       "compilerPath": "/usr/bin/gcc",
-      "compilerArgs": ["-Wall", "-ansi", "-Wextra", "-pedantic", ""],
-      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": [
+        "-Wall",
+        "-ansi",
+        "-Wextra",
+        "-pedantic",
+        ""
+      ],
+      "intelliSenseMode": "linux-gcc-x64"
     }
   ],
   "version": 4

@@ -33,6 +33,10 @@ int compute_julia_pixel(int x, int y, int width, int height, float tint_bias, un
     rgb[0] = (num_iter == 0 ? 200 : -500.0 * pow(tint_bias, 1.2) * pow(color_bias, 1.6));
     rgb[1] = (num_iter == 0 ? 100 : -255.0 * pow(color_bias, 0.3));
     rgb[2] = (num_iter == 0 ? 100 : 255 - 255.0 * pow(tint_bias, 1.2) * pow(color_bias, 3.0));
+    float avg = (rgb[0] + rgb[1] + rgb[2]) / 3;
+    rgb[0] = avg;
+    rgb[1] = avg;
+    rgb[2] = avg;
 
     return 0;
 }
