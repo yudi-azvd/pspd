@@ -1,0 +1,6 @@
+#ifndef COMMON_H_INCLUDED
+#define COMMON_H_INCLUDED
+
+#define BYTES_PER_PIXEL 24
+
+#endif // COMMON_H_INCLUDED

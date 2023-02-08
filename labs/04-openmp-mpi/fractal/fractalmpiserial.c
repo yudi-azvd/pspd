@@ -1,10 +1,12 @@
+#include "../job_division_mpi.h"
 #include <math.h>
+#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #define OUTFILE "out_julia_normal.bmp"
 
 int compute_julia_pixel(int x, int y, int width, int height, float tint_bias, unsigned char* rgb) {
-    // Check coordinates
     if ((x < 0) || (x >= width) || (y < 0) || (y >= height)) {
         fprintf(stderr, "Invalid (%d,%d) pixel coordinates in a %d x %d image\n", x, y, width, height);
         return -1;
@@ -35,7 +37,7 @@ int compute_julia_pixel(int x, int y, int width, int height, float tint_bias, un
     rgb[2] = (num_iter == 0 ? 100 : 255 - 255.0 * pow(tint_bias, 1.2) * pow(color_bias, 3.0));
 
     return 0;
-} /*fim compute julia pixel */
+}
 
 int write_bmp_header(FILE* f, int width, int height) {
 
@@ -78,7 +80,7 @@ int write_bmp_header(FILE* f, int width, int height) {
 
     // Success means that we wrote 17 "objects" successfully
     return (ret != 17);
-} /* fim write bmp-header */
+}
 
 int main(int argc, char* argv[]) {
     int n;
@@ -90,11 +92,11 @@ int main(int argc, char* argv[]) {
         fprintf(stderr, "Entre 'N' como um inteiro positivo! \n");
         return -1;
     }
+
     n = atoi(argv[1]);
     height = n;
     width = 2 * n;
     area = height * width * 3;
-    // Allocate mem for the pixels array
     pixel_array = calloc(area, sizeof(unsigned char));
     rgb = calloc(3, sizeof(unsigned char));
     printf("Computando linhas de pixel %d até %d, para uma área total de %d\n", 0, n - 1, area);
@@ -102,21 +104,17 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < n; i++)
         for (int j = 0; j < width * 3; j += 3) {
             compute_julia_pixel(j / 3, i, width, height, 1.0, rgb);
-            pixel_array[local_i] = rgb[0];
-            local_i++;
-            pixel_array[local_i] = rgb[1];
-            local_i++;
-            pixel_array[local_i] = rgb[2];
-            local_i++;
+            pixel_array[local_i++] = rgb[0];
+            pixel_array[local_i++] = rgb[1];
+            pixel_array[local_i++] = rgb[2];
         }
-    // Release mem for the pixels array
+
     free(rgb);
-    // escreve o cabeçalho do arquivo
     output_file = fopen(OUTFILE, "w");
     write_bmp_header(output_file, width, height);
-    // escreve o array no arquivo
+
     fwrite(pixel_array, sizeof(unsigned char), area, output_file);
     fclose(output_file);
     free(pixel_array);
     return 0;
-} /* fim-programa */
+}

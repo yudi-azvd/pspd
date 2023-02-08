@@ -1,7 +1,10 @@
-all: fractal-mpi-serial
+all: frac fractal-mpi-serial
 # all: fractal-mpi-serial fractal-mpi-io fractal-omp
 
-fractal-mpi-serial:
+frac: fractal/fractal.c
+	@gcc   fractal/fractal.c -o frac -lm -g
+
+fractal-mpi-serial: fractal/fractalmpiserial.c
 	@mpicc fractal/fractalmpiserial.c -o fractalmpiserial -lm
 	
 # fractal-mpi-io:
@@ -14,4 +17,4 @@ fractal-mpi-serial:
 # 	@gcc -o ordena/ordena-vetor ordena_vetor.c -fopenmp
 
 clean:
-	@rm -rf fractalmpiserial fractalmpiio fractalomp ordena-vetor
+	@rm -rf frac fractalmpiserial fractalmpiio fractalomp ordena-vetor
