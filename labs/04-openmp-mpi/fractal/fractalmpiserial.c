@@ -4,11 +4,11 @@
 #define OUTFILE "out_julia_normal.bmp"
 
 int compute_julia_pixel(int x, int y, int width, int height, float tint_bias, unsigned char* rgb) {
+    // Check coordinates
     if ((x < 0) || (x >= width) || (y < 0) || (y >= height)) {
         fprintf(stderr, "Invalid (%d,%d) pixel coordinates in a %d x %d image\n", x, y, width, height);
         return -1;
     }
-
     // "Zoom in" to a pleasing view of the Julia set
     float X_MIN = -1.6, X_MAX = 1.6, Y_MIN = -0.9, Y_MAX = +0.9;
     float float_y = (Y_MAX - Y_MIN) * (float)y / height + Y_MIN;
@@ -33,20 +33,17 @@ int compute_julia_pixel(int x, int y, int width, int height, float tint_bias, un
     rgb[0] = (num_iter == 0 ? 200 : -500.0 * pow(tint_bias, 1.2) * pow(color_bias, 1.6));
     rgb[1] = (num_iter == 0 ? 100 : -255.0 * pow(color_bias, 0.3));
     rgb[2] = (num_iter == 0 ? 100 : 255 - 255.0 * pow(tint_bias, 1.2) * pow(color_bias, 3.0));
-    float avg = (rgb[0] + rgb[1] + rgb[2]) / 3;
-    rgb[0] = avg;
-    rgb[1] = avg;
-    rgb[2] = avg;
 
     return 0;
-}
+} /*fim compute julia pixel */
 
-int write_bmp_header(FILE* f, int height, int width) {
-    unsigned int row_size_in_bytes = height * 3 + ((height * 3) % 4 == 0 ? 0 : (4 - (height * 3) % 4));
+int write_bmp_header(FILE* f, int width, int height) {
+
+    unsigned int row_size_in_bytes = width * 3 + ((width * 3) % 4 == 0 ? 0 : (4 - (width * 3) % 4));
 
     // Define all fields in the bmp header
     char id[2] = "BM";
-    unsigned int filesize = 54 + (int)(row_size_in_bytes * width * sizeof(char));
+    unsigned int filesize = 54 + (int)(row_size_in_bytes * height * sizeof(char));
     short reserved[2] = {0, 0};
     unsigned int offset = 54;
 
@@ -54,7 +51,7 @@ int write_bmp_header(FILE* f, int height, int width) {
     unsigned short planes = 1;
     unsigned short bits = 24;
     unsigned int compression = 0;
-    unsigned int image_size = height * width * 3 * sizeof(char);
+    unsigned int image_size = width * height * 3 * sizeof(char);
     int x_res = 0;
     int y_res = 0;
     unsigned int ncolors = 0;
@@ -68,8 +65,8 @@ int write_bmp_header(FILE* f, int height, int width) {
     ret += fwrite(reserved, sizeof(short), 2, f);
     ret += fwrite(&offset, sizeof(int), 1, f);
     ret += fwrite(&size, sizeof(int), 1, f);
-    ret += fwrite(&height, sizeof(int), 1, f);
     ret += fwrite(&width, sizeof(int), 1, f);
+    ret += fwrite(&height, sizeof(int), 1, f);
     ret += fwrite(&planes, sizeof(short), 1, f);
     ret += fwrite(&bits, sizeof(short), 1, f);
     ret += fwrite(&compression, sizeof(int), 1, f);
@@ -81,7 +78,7 @@ int write_bmp_header(FILE* f, int height, int width) {
 
     // Success means that we wrote 17 "objects" successfully
     return (ret != 17);
-}
+} /* fim write bmp-header */
 
 int main(int argc, char* argv[]) {
     int n;
@@ -97,6 +94,7 @@ int main(int argc, char* argv[]) {
     height = n;
     width = 2 * n;
     area = height * width * 3;
+    // Allocate mem for the pixels array
     pixel_array = calloc(area, sizeof(unsigned char));
     rgb = calloc(3, sizeof(unsigned char));
     printf("Computando linhas de pixel %d até %d, para uma área total de %d\n", 0, n - 1, area);
@@ -104,12 +102,16 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < n; i++)
         for (int j = 0; j < width * 3; j += 3) {
             compute_julia_pixel(j / 3, i, width, height, 1.0, rgb);
-            pixel_array[local_i++] = rgb[0];
-            pixel_array[local_i++] = rgb[1];
-            pixel_array[local_i++] = rgb[2];
+            pixel_array[local_i] = rgb[0];
+            local_i++;
+            pixel_array[local_i] = rgb[1];
+            local_i++;
+            pixel_array[local_i] = rgb[2];
+            local_i++;
         }
-
+    // Release mem for the pixels array
     free(rgb);
+    // escreve o cabeçalho do arquivo
     output_file = fopen(OUTFILE, "w");
     write_bmp_header(output_file, width, height);
     // escreve o array no arquivo
@@ -117,4 +119,4 @@ int main(int argc, char* argv[]) {
     fclose(output_file);
     free(pixel_array);
     return 0;
-}
+} /* fim-programa */
