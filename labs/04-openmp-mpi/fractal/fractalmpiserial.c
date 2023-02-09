@@ -5,6 +5,8 @@
 #include <stdlib.h>
 
 #define OUTFILE "out_julia_normal.bmp"
+// É o que está  em write_bmp_header
+#define HEADER_OFFSET (54)
 
 int compute_julia_pixel(int x, int y, int width, int height, float tint_bias, unsigned char* rgb) {
     if ((x < 0) || (x >= width) || (y < 0) || (y >= height)) {
@@ -117,6 +119,7 @@ int main(int argc, char* argv[]) {
     int range[2];
     int area = 0, width = 0, height = 0, local_i = 0;
     unsigned char *pixel_array, *rgb;
+    double t1, t2;
     FILE* output_file;
 
     MPI_File file;
@@ -160,18 +163,21 @@ int main(int argc, char* argv[]) {
     }
 
     divide_jobs_and_offsets(n, workers);
-    int start = job_offsets[rank];
-    int jump = job_division[rank];
-    int end = start + jump;
-    int chars_count = jump;
+    int line_start = job_offsets[rank];
+    int line_jump = job_division[rank];
+    int line_end = line_start + line_jump;
+    int byte_count = line_jump * width * BYTES_PER_PIXEL;
+    int byte_offset = line_start * width * BYTES_PER_PIXEL;
 
-    if (rank == 0) {
-        printf("Computando linhas de pixel %d até %d, para uma área total de %d pixels\n", 0, n - 1, area);
-        // print_job_division(workers);
-        // print_job_offsets(workers);
-    }
+    // if (rank == 0) {
+    //     printf("Computando linhas de pixel %d até %d, para uma área total de %d bytes\n", 0, n - 1, area);
+    // print_job_division(workers);
+    // print_job_offsets(workers);
+    // }
 
-    for (int i = start; i < end; i++)
+    t1 = MPI_Wtime();
+    local_i += byte_offset;
+    for (int i = line_start; i < line_end; i++)
         for (int j = 0; j < width * 3; j += 3) {
             compute_julia_pixel(j / 3, i, width, height, 1.0, rgb);
             pixel_array[local_i++] = rgb[0];
@@ -179,23 +185,29 @@ int main(int argc, char* argv[]) {
             pixel_array[local_i++] = rgb[2];
         }
 
-    printf("PID %d | start: %d, end: %d, jump: %d, local_i: %d\n", rank, start, end, jump, local_i);
+    // printf("PID %d | start: %d, end: %d, jump: %d, bytes: %d, local_i: %d, byte offs: %d\n", rank, line_start, line_end, line_jump, byte_count, local_i,
+    //        byte_offset);
 
     if (rank == 0) {
         char write = 1;
-        MPI_File_write(file, pixel_array, local_i, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
+        MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
         MPI_Send(&write, 1, MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
     } else {
         char write = 1;
         MPI_Recv(&write, 1, MPI_CHAR, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        // MPI_File_write(file, pixel_array + (start * 3 + local_i), local_i, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
-        // Se for o último processo, esse MPI_Send é desnecessário mesmo
-        if (rank < nprocs - 1)
+        MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
+
+        int is_last_process = rank == nprocs - 1;
+        if (!is_last_process)
             MPI_Send(&write, 1, MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
     }
 
+    t2 = MPI_Wtime();
     free(rgb);
     free(pixel_array);
+
+    if (rank == 0)
+        printf("Time elapsed %f\n", t2 - t1);
 
     MPI_File_close(&file);
     MPI_Finalize();

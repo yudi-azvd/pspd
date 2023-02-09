@@ -106,12 +106,6 @@ int main(int argc, char* argv[]) {
             pixel_array[local_i++] = rgb[2];
         }
 
-    for (int i = 0; i < 10; i += 3) {
-        pixel_array[i + 0] = 0;
-        pixel_array[i + 1] = 255;
-        pixel_array[i + 2] = 0;
-    }
-
     free(rgb);
     output_file = fopen(OUTFILE, "w");
     write_bmp_header(output_file, width, height);

@@ -19,6 +19,8 @@
         "cstdlib": "cpp",
         "mpi.h": "c",
         "stdio.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "job_division_mpi.h": "c",
+        "exception": "c"
     }
 }
