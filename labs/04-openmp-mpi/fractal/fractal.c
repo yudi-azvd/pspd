@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     FILE* output_file;
     unsigned char *pixel_array, *rgb;
 
-    if ((argc <= 1) | (atoi(argv[1]) < 1)) {
+    if ((argc <= 1) || (atoi(argv[1]) < 1)) {
         fprintf(stderr, "Entre 'N' como um inteiro positivo! \n");
         return -1;
     }
