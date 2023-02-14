@@ -5,13 +5,41 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(gdb) diff program",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/diff",
+            "args": [
+                "ref500.bmp",
+                "out_julia_normal.bmp",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "GCC Build Diff"
+        },
+        {
             "name": "(gdb) Stand alone C program",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/a.out",
             "args": [
                 // "../samples/line.txt",
-                "aleatorio20.in",
+                // "aleatorio20.in",
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
