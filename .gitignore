@@ -199,7 +199,15 @@ aleatorio.in
 *.bmp
 ordena-vetor
 fractalmpiserial
+fractalmpi_io
+fractalmpiserial-mem
+fractalmpi_io-mem
 fractalmpiio
 fractalomp
 frac
+fractal-dbg-diff
+diff
 pspd-experimentos-openmp-mpi-yudi-yamane
+
+report.txt
+runtimes

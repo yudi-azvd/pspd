@@ -9,11 +9,11 @@
       "defines": [],
       "compilerPath": "/usr/bin/gcc",
       "compilerArgs": [
+        "-Wextra",
         "-Wall",
         "-ansi",
-        "-Wextra",
         "-pedantic",
-        ""
+        "-fopenmp"
       ],
       "intelliSenseMode": "linux-gcc-x64"
     }
