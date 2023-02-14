@@ -145,8 +145,8 @@ int main(int argc, char* argv[]) {
         return 2;
     }
 
-    workers = nprocs;
     n = atoi(argv[1]);
+    workers = nprocs;
     height = n;
     width = 2 * n;
     area = height * width * 3;
@@ -171,11 +171,13 @@ int main(int argc, char* argv[]) {
 
     // if (rank == 0) {
     //     printf("Computando linhas de pixel %d até %d, para uma área total de %d bytes\n", 0, n - 1, area);
-    // print_job_division(workers);
-    // print_job_offsets(workers);
+    //     print_job_division(workers);
+    //     print_job_offsets(workers);
     // }
 
+    MPI_Barrier(MPI_COMM_WORLD);
     t1 = MPI_Wtime();
+
     local_i += byte_offset;
     for (int i = line_start; i < line_end; i++)
         for (int j = 0; j < width * 3; j += 3) {
@@ -202,12 +204,14 @@ int main(int argc, char* argv[]) {
             MPI_Send(&write, 1, MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
     }
 
+    MPI_Barrier(MPI_COMM_WORLD);
     t2 = MPI_Wtime();
+
     free(rgb);
     free(pixel_array);
 
     if (rank == 0)
-        printf("Time elapsed %f\n", t2 - t1);
+        printf("N = %d, Time elapsed %f\n", n, t2 - t1);
 
     MPI_File_close(&file);
     MPI_Finalize();
