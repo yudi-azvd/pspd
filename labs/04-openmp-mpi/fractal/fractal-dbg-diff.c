@@ -106,25 +106,38 @@ int main(int argc, char* argv[]) {
             pixel_array[local_i++] = rgb[2];
         }
 
+    int width3 = width * 3;
     pixel_array[0] = 0;
     pixel_array[1] = 255;
     pixel_array[2] = 0;
 
-    pixel_array[width * 3 - 3 + 0] = 0;
-    pixel_array[width * 3 - 3 + 1] = 255;
-    pixel_array[width * 3 - 3 + 2] = 255;
+    pixel_array[width3 - 3 + 0] = 0;
+    pixel_array[width3 - 3 + 1] = 255;
+    pixel_array[width3 - 3 + 2] = 255;
 
-    pixel_array[width * 3 + 0] = 255;
-    pixel_array[width * 3 + 1] = 0;
-    pixel_array[width * 3 + 2] = 0;
+    pixel_array[width3 + 0] = 255;
+    pixel_array[width3 + 1] = 0;
+    pixel_array[width3 + 2] = 0;
+
+    pixel_array[local_i / 2 - width3 + 0] = 255;
+    pixel_array[local_i / 2 - width3 + 1] = 255;
+    pixel_array[local_i / 2 - width3 + 2] = 255;
+
+    pixel_array[local_i / 2 + 0] = 255;
+    pixel_array[local_i / 2 + 1] = 0;
+    pixel_array[local_i / 2 + 2] = 255;
+
+    pixel_array[local_i / 2 + width3 + 0] = 128;
+    pixel_array[local_i / 2 + width3 + 1] = 128;
+    pixel_array[local_i / 2 + width3 + 2] = 128;
 
     pixel_array[3] = 0;
     pixel_array[4] = 0;
     pixel_array[5] = 255;
 
-    pixel_array[local_i - width * 3 - 0 + 0] = 255;
-    pixel_array[local_i - width * 3 - 0 + 1] = 255;
-    pixel_array[local_i - width * 3 - 0 + 2] = 0;
+    pixel_array[local_i - width3 - 0 + 0] = 255;
+    pixel_array[local_i - width3 - 0 + 1] = 255;
+    pixel_array[local_i - width3 - 0 + 2] = 0;
 
     pixel_array[local_i - 3] = 255;
     pixel_array[local_i - 2] = 255;

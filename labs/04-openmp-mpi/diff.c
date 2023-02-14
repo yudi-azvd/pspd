@@ -1,9 +1,10 @@
+#include <locale.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define CMP_PIXEL_BUFFER 64
+#define CMP_PIXEL_BUFFER 128
 #define BMP_HEADER_OFFSET 54
 
 // Header Bitmap em stuct sem padding
@@ -126,6 +127,7 @@ void print_pixel(Pixel* p) {
 }
 
 int main(int argc, char** argv) {
+    setlocale(LC_NUMERIC, "");
     if (argc < 3) {
         fprintf(stderr, "Usage: %s <file1.bmp> <file2.bmp>\n", argv[0]);
         return 1;
@@ -164,27 +166,30 @@ int main(int argc, char** argv) {
     Pixel* pixel_row_2 = calloc(cols, sizeof(Pixel));
     Pixel *p1, *p2;
 
-    // fseek(f1, 0L, BMP_HEADER_OFFSET);
-    // fseek(f2, 0L, BMP_HEADER_OFFSET);
-    // printf("f1 at %ld\n", ftell(f1));
-    // printf("f2 at %ld\n", ftell(f2));
-
     char cmp_pixel_buffer[CMP_PIXEL_BUFFER];
-
+    int pixel_counter = 0, row_counter = 0;
+    int byte_counter = 0;
+    int bytes_read = 0;
+    int read_count = 0;
     int different_pixels = 0, i, j;
-    // FIXME: pq row * 2?????
-    for (i = 0; i < rows * 2; i++) {
-        fread(pixel_row_1, sizeof(Pixel), rows, f1);
-        fread(pixel_row_2, sizeof(Pixel), rows, f2);
+    for (i = 0; i < rows; i++) {
+        read_count = fread(pixel_row_1, sizeof(Pixel), cols, f1);
+        bytes_read += read_count * sizeof(Pixel);
+        read_count = fread(pixel_row_2, sizeof(Pixel), cols, f2);
+        row_counter++;
 
         for (j = 0; j < cols; j++) {
+            pixel_counter++;
+            byte_counter += 3;
             p1 = &pixel_row_1[j];
             p2 = &pixel_row_2[j];
-            if (p1->b == 255 && p1->g == 255 && p1->r == 0) {
-                printf("Coord (%d, %d)", i, j);
-            }
             if (0 != cmp_pixel(*p1, *p2)) {
-                snprintf(cmp_pixel_buffer, CMP_PIXEL_BUFFER, "(x: %d, y: %d)\nfile1 (%3d, %3d, %3d)\nfile2 (%3d, %3d, %3d)\n", i / 2, j, p1->r, p1->g, p1->b,
+                snprintf(cmp_pixel_buffer, CMP_PIXEL_BUFFER,
+                         "x:%d y:%d\n"
+                         "  file1 (%3d, %3d, %3d)\n"
+                         "  file2 (%3d, %3d, %3d)\n",
+                         i, j,
+                         p1->r, p1->g, p1->b,
                          p2->r, p2->g, p2->b);
                 fprintf(stderr, "%s\n", cmp_pixel_buffer);
                 different_pixels++;
