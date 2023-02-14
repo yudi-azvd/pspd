@@ -3,8 +3,8 @@ all: frac fractal-mpi-serial fractal-mpi-io diff
 fractal-dbg-diff: fractal/fractal-dbg-diff.c
 	@gcc   fractal/fractal-dbg-diff.c -o fractal-dbg-diff -lm -g
 
-frac: fractal/fractal.c
-	@gcc   fractal/fractal.c -o frac -lm -g
+f: fractal/fractal.c
+	@gcc   fractal/fractal.c -o f -lm -g
 
 fractal-mpi-serial: fractal/fractalmpiserial.c
 	@mpicc fractal/fractalmpiserial.c -o fractalmpiserial -lm
@@ -17,6 +17,9 @@ fractal-mpi-io: fractal/fractalmpi_io.c
 
 fractal-mpi-io-mem: fractal/fractalmpi_io-mem.c
 	@mpicc fractal/fractalmpi_io-mem.c -o fractalmpi_io-mem -lm
+
+fractal-omp: fractal/fractalomp.c
+	@mpicc fractal/fractalomp.c -o fractalomp -lm
 
 diff: diff.c
 	@gcc diff.c -g -Wall -Wextra -pedantic -o diff

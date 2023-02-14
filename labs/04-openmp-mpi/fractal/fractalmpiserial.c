@@ -1,4 +1,4 @@
-#include "../job_division_mpi.h"
+#include "../job_division.h"
 #include <math.h>
 #include <mpi.h>
 #include <stdio.h>
