@@ -10,5 +10,5 @@
 
 final_dir="/pspd/04-openmp-mpi"
 
-files="fractal Makefile ordena *.h"
+files="Makefile fractal/ ordena/ *.h run-experiment.sh"
 scp -P 13508 -r ${files}  a160149410@chococino.naquadah.com.br:~${final_dir}
