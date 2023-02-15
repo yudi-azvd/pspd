@@ -22,6 +22,7 @@ int get_file_size(char* filename) {
         exit(1);
     }
 
+    // FIXME: Uso incorreto. Olhar fractalomp.c:144
     fseek(fp, 0L, SEEK_END);
     int size = ftell(fp);
     fclose(fp);
@@ -91,7 +92,8 @@ int main(int argc, char** argv) {
         // printf("(%d) offset = %8d | end: %d | jobs: %d\n", tid, offset, offset + displc, displc);
 
 // FIXME: não funciona
-#pragma omp for reduction(+ : ocurrences)
+#pragma omp for reduction(+ \
+                          : ocurrences)
         for (int i = 0; i < displc; i += BYTES_PER_LINE) {
             fseek(fp, offset + i, SEEK_SET);
             int bytes_read = fscanf(fp, "%d", &read_number);

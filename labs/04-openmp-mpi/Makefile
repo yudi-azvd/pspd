@@ -1,4 +1,4 @@
-all: frac fractal-mpi-serial fractal-mpi-io diff
+all: f fractal-mpi-serial fractal-mpi-io fractal-omp diff 
 
 fractal-dbg-diff: fractal/fractal-dbg-diff.c
 	@gcc   fractal/fractal-dbg-diff.c -o fractal-dbg-diff -lm -g
@@ -19,16 +19,13 @@ fractal-mpi-io-mem: fractal/fractalmpi_io-mem.c
 	@mpicc fractal/fractalmpi_io-mem.c -o fractalmpi_io-mem -lm
 
 fractal-omp: fractal/fractalomp.c
-	@mpicc fractal/fractalomp.c -o fractalomp -lm
+	@gcc -g fractal/fractalomp.c -o fractalomp -lm -fopenmp
 
 diff: diff.c
 	@gcc diff.c -g -Wall -Wextra -pedantic -o diff
-	
-# fractal-omp:
-# 	@mpicc fractal/fractalomp.c -o fractalomp -lm
 	
 # vetor:
 # 	@gcc -o ordena/ordena-vetor ordena_vetor.c -fopenmp
 
 clean:
-	@rm -rf frac fractalmpiserial fractalmpi_io fractalomp ordena-vetor fractal-dbg-diff
+	@rm -rf f fractalmpiserial fractalmpi_io fractalomp ordena-vetor fractal-dbg-diff *-mem

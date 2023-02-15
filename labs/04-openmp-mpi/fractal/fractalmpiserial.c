@@ -3,6 +3,7 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define OUTFILE "out_julia_normal.bmp"
 // É o que está  em write_bmp_header
@@ -118,6 +119,8 @@ int main(int argc, char* argv[]) {
     int n, nprocs, workers, rank;
     int range[2];
     int area = 0, width = 0, height = 0, local_i = 0;
+    char host[200];
+    gethostname(host, 199);
     unsigned char *pixel_array, *rgb;
     double t1, t2;
     FILE* output_file;
@@ -191,11 +194,13 @@ int main(int argc, char* argv[]) {
     //        byte_offset);
 
     if (rank == 0) {
+        // printf("hostname %s - %d\n", host, line_start);
         char write = 1;
         MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
         MPI_Send(&write, 1, MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
     } else {
         char write = 1;
+        // printf("hostname %s - %d\n", host, line_start);
         MPI_Recv(&write, 1, MPI_CHAR, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
 

@@ -25,6 +25,18 @@
 			],
 			"group": "build",
 			"detail": "compiler: /usr/bin/gcc"
+		},
+		{
+			"type": "shell",
+			"label": "Lab 04 Programs",
+			"command": "cd /home/yudi/Documents/3-recursos/programming/studies/unb/pspd/labs/04-openmp-mpi/; make",
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
 		}
 	]
 }

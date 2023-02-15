@@ -22,6 +22,7 @@ int get_file_size(char* filename) {
         exit(1);
     }
 
+    // FIXME: Uso incorreto. Olhar fractalomp.c:144
     fseek(fp, 0L, SEEK_END);
     int size = ftell(fp);
     fclose(fp);

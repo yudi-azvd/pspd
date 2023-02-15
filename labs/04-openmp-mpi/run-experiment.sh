@@ -1,16 +1,21 @@
 nprocs=$1
 nlines=$2
 program=$3
+# Se não houber 4° argumento, use 10 como padrão
+trials="${4:-10}"
 
-echo "Running ${program} with ${nprocs} processes and ${nlines} lines"
+echo "Running ${program} in $trials trials with ${nprocs} workers and ${nlines} lines"
 
 file="report.txt"
 
 > $file
 
-for i in {1..30}; do 
-    echo "iteration ${i}/30"
-    mpirun -n $nprocs --host cm1,cm2,c3,cm4 ./$program $nlines >> $file; 
+for ((i=1; i<=$trials; i++))
+do 
+    # Se uma máquina ficar com mais de um processo, dá ruim
+    printf "iteration ${i}/${trials} ... "
+    mpirun -n 4 -host cm1,cm2,cm3,cm4 ./$program $nlines >> $file; 
+    printf "done\n"
 done
 
 # Só o que importa é o tempo gasto. Ignore todos os outros prints
@@ -19,8 +24,8 @@ mv tmp $file
 
 cat $file | sed -E 's/^.*Time elapsed\s+(.*)$/\1/g' > runtimes
 
-
-echo "Executed ${program} with ${nprocs} processes and ${nlines} lines"
+echo "Executed ${program} in $trials trials with ${nprocs} workers and ${nlines} lines. "
+echo "Avg time:"
 
 # Tempo médio de execução
 awk '{s+=$1}END{print "",s/NR}' RS=" " runtimes

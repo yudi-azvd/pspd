@@ -60,6 +60,35 @@
             ]
         },
         {
+            "name": "(gdb) Lab 4 Program",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/../${fileBasenameNoExtension}",
+            "args": [
+                // "../samples/line.txt",
+                // "aleatorio20.in",
+                "500"
+            ],
+            "preLaunchTask": "Lab 04 Programs",
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "(gdb) DWC Client",
             "type": "cppdbg",
             "request": "launch",

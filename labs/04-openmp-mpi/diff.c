@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CMP_PIXEL_BUFFER 128
+#define CMP_PIXEL_BUFFER 256
 #define BMP_HEADER_OFFSET 54
 
 // Header Bitmap em stuct sem padding
