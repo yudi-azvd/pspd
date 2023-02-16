@@ -97,8 +97,14 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    if (argc >= 3) {
+        workers = atoi(argv[2]);
+    } else
+        workers = omp_get_max_threads();
+
+    printf("workers=%d\n", workers);
+
     n = atoi(argv[1]);
-    workers = omp_get_max_threads();
     height = n;
     width = 2 * n;
     area = height * width * 3;

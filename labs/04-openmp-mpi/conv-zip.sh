@@ -8,7 +8,6 @@ pandoc --no-tex-ligatures \
   -o $pdf_output \
   --highlight-style=kate
 
-# zip -q TF_DOC_G_YudiYamane.zip * -x *.md *.docx *.sh *.~lock.* *.chc
 rm -rf pspd-experimentos-openmp-mpi-yudi-yamane.zip
 zip -q pspd-experimentos-openmp-mpi-yudi-yamane.zip -r ./ \
-  -x *.png *.sh *.out *.o *.md
+  -x *.png *.sh *.out *.o *.md *.bmp

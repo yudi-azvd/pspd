@@ -200,8 +200,8 @@ aleatorio.in
 ordena-vetor
 fractalmpiserial
 fractalmpi_io
-fractalmpiserial-mem
-fractalmpi_io-mem
+fractalmpiserial-slow
+fractalmpi_io-slow
 fractalmpiio
 fractalomp
 f

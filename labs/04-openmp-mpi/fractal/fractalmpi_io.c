@@ -3,6 +3,7 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define OUTFILE "out_julia_normal.bmp"
 // É o que está  em write_bmp_header
@@ -121,6 +122,8 @@ int main(int argc, char* argv[]) {
     unsigned char *pixel_array, *rgb;
     double t1, t2;
     FILE* output_file;
+    char host[16];
+    gethostname(host, 15);
 
     MPI_File file;
     MPI_Init(&argc, &argv);
@@ -150,7 +153,6 @@ int main(int argc, char* argv[]) {
     height = n;
     width = 2 * n;
     area = height * width * 3;
-    pixel_array = calloc(area, sizeof(unsigned char));
     rgb = calloc(3, sizeof(unsigned char));
 
     if (write_bmp_header(file, width, height)) {
@@ -159,7 +161,7 @@ int main(int argc, char* argv[]) {
         }
 
         MPI_Finalize();
-        return -3;
+        return 3;
     }
 
     divide_jobs_and_offsets(n, workers);
@@ -169,6 +171,7 @@ int main(int argc, char* argv[]) {
     int byte_count = line_jump * width * BYTES_PER_PIXEL;
     int byte_offset = line_start * width * BYTES_PER_PIXEL;
 
+    pixel_array = calloc(byte_count, sizeof(unsigned char));
     // if (rank == 0) {
     //     printf("Computando linhas de pixel %d até %d, para uma área total de %d bytes\n", 0, n - 1, area);
     // print_job_division(workers);
@@ -176,7 +179,6 @@ int main(int argc, char* argv[]) {
     // }
 
     t1 = MPI_Wtime();
-    local_i += byte_offset;
     for (int i = line_start; i < line_end; i++)
         for (int j = 0; j < width * 3; j += 3) {
             compute_julia_pixel(j / 3, i, width, height, 1.0, rgb);
@@ -190,14 +192,13 @@ int main(int argc, char* argv[]) {
 
     // MPI_Request req;
     // MPI_File_iwrite_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, &req);
-    MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
+    MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
 
     t2 = MPI_Wtime();
     free(rgb);
     free(pixel_array);
 
-    if (rank == 0)
-        printf("N = %d, Time elapsed %f\n", n, t2 - t1);
+    printf("PID %d host %s | N = %d, Time elapsed %f\n", rank, host, n, t2 - t1);
 
     MPI_File_close(&file);
     MPI_Finalize();
