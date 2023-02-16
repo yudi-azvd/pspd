@@ -4,6 +4,8 @@ author: "Yudi Yamane de Azevedo 16/0149410"
 fontsize: 12pt
 ---
 
+<!-- Esse é o mesmo texto do PDF -->
+
 # Preparo do ambiente
 
 Certifique-se de ter as seguintes dependências instaladas na sua
@@ -18,8 +20,8 @@ Com as dependências instaladas, você pode compilar os programas executando
 o seguinte:
 
     make
-
-Se ocorreu tudo certo, deve haver alguns executáveis: 
+Note que os códigos fonte estão em `fractal/`. Se ocorreu tudo certo, deve haver
+alguns executáveis: 
 
 - `f`: programa original de gerar o fractal. Foi usado para gerar imagens
 de referência para verificar  o funcionamento correto dos programas a seguir
