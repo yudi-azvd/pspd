@@ -211,3 +211,4 @@ pspd-experimentos-openmp-mpi-yudi-yamane
 tmp
 report.txt
 runtimes
+labs/04-openmp-mpi/*.sh
