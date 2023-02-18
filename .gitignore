@@ -34,6 +34,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 __pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 *.so
@@ -212,3 +213,4 @@ tmp
 report.txt
 runtimes
 labs/04-openmp-mpi/*.sh
+labs/04-openmp-mpi/*.py
