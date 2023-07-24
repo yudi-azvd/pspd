@@ -24,7 +24,6 @@ mpi_args_parser.add_argument(
 mpi_args_parser.add_argument(
     '-t',
     '--trials',
-    required=True,
     help='number of trials for experiment',
     type=int,
     default=10,

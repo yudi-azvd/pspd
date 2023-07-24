@@ -24,4 +24,4 @@ def stats(nums: 'list[float]'):
     variance = avg_of(deviations_sqr)
     std_deviation = variance**.5
     std_error = std_deviation/length**.5
-    return [avg, std_error]
+    return (avg, std_error)

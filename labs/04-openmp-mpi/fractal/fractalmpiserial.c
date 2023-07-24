@@ -1,4 +1,5 @@
 #include "../job_division.h"
+#include "../time_keeping.h"
 #include <math.h>
 #include <mpi.h>
 #include <stdio.h>
@@ -173,11 +174,11 @@ int main(int argc, char* argv[]) {
         return -3;
     }
 
-    // if (rank == 0) {
-    //     printf("Computando linhas de pixel %d até %d, para uma área total de %d bytes\n", 0, n - 1, g_area);
-    //     print_job_division(workers);
-    //     print_job_offsets(workers);
-    // }
+    if (rank == 0) {
+        printf("Computando linhas de pixel %d até %d, para uma área total de %d bytes\n", 0, n - 1, g_area);
+        print_job_division(workers);
+        print_job_offsets(workers);
+    }
 
     t1 = MPI_Wtime();
     for (int i = line_start; i < line_end; i++)
@@ -188,30 +189,45 @@ int main(int argc, char* argv[]) {
             pixel_array[local_i++] = rgb[2];
         }
 
-    // printf("PID %d | start: %d, end: %d, jump: %d, bytes: %d, local_i: %d, byte offs: %d\n", rank, line_start, line_end, line_jump, byte_count, local_i,
-    //        byte_offset);
+    printf("PID %d | start: %d, end: %d, jump: %d, bytes: %d, local_i: %d, byte offs: %d\n", rank, line_start, line_end, line_jump, byte_count, local_i,
+           byte_offset);
 
     if (rank == 0) {
         char write = 1;
-        // MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
         MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
         MPI_Send(&write, 1, MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
     } else {
         char write = 1;
         MPI_Recv(&write, 1, MPI_CHAR, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        // MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array + byte_offset, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
         MPI_File_write_at(file, HEADER_OFFSET + byte_offset, pixel_array, byte_count, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE);
 
         int is_last_process = rank == nprocs - 1;
         if (!is_last_process)
             MPI_Send(&write, 1, MPI_CHAR, rank + 1, 0, MPI_COMM_WORLD);
     }
-
     t2 = MPI_Wtime();
+    double time_range[2] = {t1, t2};
+
+    if (rank != 0) {
+        MPI_Send(time_range, 2, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+    } else {
+        register_time(rank, t1, t2);
+
+        MPI_Status st;
+        for (size_t i = 1; i < nprocs; i++) {
+            MPI_Recv(time_range, 2, MPI_DOUBLE, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &st);
+            double recv_t1 = time_range[0];
+            double recv_t2 = time_range[1];
+            register_time(i, recv_t1, recv_t2);
+            printf("Received t1 %.2f t2 %.2f from %d\n", recv_t1, recv_t2, st.MPI_SOURCE);
+        }
+
+        double max_runtime = get_max_runtime(nprocs);
+        printf("N = %d, Time elapsed %f\n", n, max_runtime);
+    }
+
     free(rgb);
     free(pixel_array);
-
-    printf("PID %d host %s | N = %d, Time elapsed %f\n", rank, host, n, t2 - t1);
 
     MPI_File_close(&file);
     MPI_Finalize();
